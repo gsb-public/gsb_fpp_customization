@@ -63,12 +63,15 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
     foreach($remove_items as $key => $value) {
       if (isset($vars['categories'][$value])) {
+        $root_index = array_search('root',array_keys($vars['categories']));
         $index = array_search($value,array_keys($vars['categories']));
+        if ($index > $root_index) {
+          $index--;
+        }
         unset($vars['categories'][$value]);
         unset($vars['categories_array'][$index]);
       }
     }
-
 
 }
 

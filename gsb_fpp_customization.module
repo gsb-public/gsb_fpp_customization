@@ -54,7 +54,7 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     $remove_items = array();
 
     foreach ($active_category_ids as $key => $value) {
-      if (!isset($workbench_access [$value])) {
+      if (!isset($workbench_access[$value])) {
         $remove_items[] = $active['tree'][$value]['name'];
       }
     }

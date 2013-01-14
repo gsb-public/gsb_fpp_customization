@@ -1,0 +1,74 @@
+<?php
+
+/**
+ * Implementation of hook_form_alter()
+ */
+function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
+
+  if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
+
+    global $user;
+    
+    workbench_access_user_load_data($user);
+    $active = workbench_access_get_active_tree();
+    $account_access = array_keys($user->workbench_access);
+
+    $category = array();
+
+    foreach ($account_access as $key => $value) {
+      $test = $key;
+      if (isset($active['tree'][$value])) {
+        $category = $active['tree'][$value]['name'];
+        $categories[$category] = $category;
+      }
+    }
+
+    // Set the proper dependencies for the reusable markup
+
+    //$form['reusable']['category']['#value'] = '';
+    //$form['reusable']['category']['#type'] = 'value';
+    $form['reusable']['category']['#type'] = 'select';
+    //$form['reusable']['category']['#options'] = array('what' => 'what','will' => 'will','try' => 'try');
+    $form['reusable']['category']['#options'] = $categories;
+
+  }
+
+}
+
+/**
+ * Preprocess the panels_add_content_modal() function to add the HTML for the preview
+ */
+function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
+
+  $test = 'something';
+
+}
+
+/*
+ * Implements hook_module_implements_alter(&$implementations, $hook)
+ */
+/*
+function gsb_fpp_customization_module_implements_alter(&$implementations, $hook) {
+
+    if ($hook == "entity_info_alter") {
+        $group = $implementations['gsb_fpp_customization'];
+        unset($implementations['gsb_fpp_customization']);
+        $implementations['gsb_fpp_customization'] = $group;
+    }
+
+}
+*/
+
+/*
+function gsb_fpp_customization_entity_info_alter(&$entity_info) {
+
+  if (isset($entity_info['fieldable_panels_pane']['bundles']['spotlight'])) {
+      unset($entity_info['fieldable_panels_pane']['bundles']['spotlight']);
+  }
+
+  //if (isset($entity_info['fieldable_panels_pane']['bundles']['map'])) {
+  //    unset($entity_info['fieldable_panels_pane']['bundles']['map']);
+  //}
+
+}
+*/

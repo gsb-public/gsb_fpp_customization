@@ -44,31 +44,3 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
 }
 
-/*
- * Implements hook_module_implements_alter(&$implementations, $hook)
- */
-/*
-function gsb_fpp_customization_module_implements_alter(&$implementations, $hook) {
-
-    if ($hook == "entity_info_alter") {
-        $group = $implementations['gsb_fpp_customization'];
-        unset($implementations['gsb_fpp_customization']);
-        $implementations['gsb_fpp_customization'] = $group;
-    }
-
-}
-*/
-
-/*
-function gsb_fpp_customization_entity_info_alter(&$entity_info) {
-
-  if (isset($entity_info['fieldable_panels_pane']['bundles']['spotlight'])) {
-      unset($entity_info['fieldable_panels_pane']['bundles']['spotlight']);
-  }
-
-  //if (isset($entity_info['fieldable_panels_pane']['bundles']['map'])) {
-  //    unset($entity_info['fieldable_panels_pane']['bundles']['map']);
-  //}
-
-}
-*/

@@ -40,7 +40,35 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
-  $test = 'something';
+    global $user;
+
+    workbench_access_user_load_data($user);
+  
+    $active = workbench_access_get_active_tree();
+    $active_category_ids = array_keys($active['tree']);
+    
+    $workbench_access = $user->workbench_access;
+  
+    // find the categories that are not accessable to the user ...
+  
+    $remove_items = array();
+
+    foreach ($active_category_ids as $key => $value) {
+      if (!isset($workbench_access [$value])) {
+        $remove_items[] = $active['tree'][$value]['name'];
+      }
+    }
+    
+    // ... and remove them from the list that is displayed
+
+    foreach($remove_items as $key => $value) {
+      if (isset($vars['categories'][$value])) {
+        $index = array_search($value,array_keys($vars['categories']));
+        unset($vars['categories'][$value]);
+        unset($vars['categories_array'][$index]);
+      }
+    }
+
 
 }
 

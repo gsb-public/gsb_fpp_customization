@@ -16,19 +16,19 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     $category = array();
 
     foreach ($account_access as $key => $value) {
-      $test = $key;
       if (isset($active['tree'][$value])) {
         $category = $active['tree'][$value]['name'];
         $categories[$category] = $category;
       }
     }
 
-    // Set the proper dependencies for the reusable markup
-
-    //$form['reusable']['category']['#value'] = '';
-    //$form['reusable']['category']['#type'] = 'value';
+    if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
+      $form['reusable']['category']['#value'] = $form_state['input']['category'];
+    } else {
+      $form['reusable']['category']['#value'] = '';
+    }
+    
     $form['reusable']['category']['#type'] = 'select';
-    //$form['reusable']['category']['#options'] = array('what' => 'what','will' => 'will','try' => 'try');
     $form['reusable']['category']['#options'] = $categories;
 
   }

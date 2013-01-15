@@ -39,7 +39,7 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Preprocess the panels_add_content_modal() function to remove any c
+ * Preprocess the panels_add_content_modal() function to remove any
  * categories (workbench sections) that the user doesn't have access to.
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {

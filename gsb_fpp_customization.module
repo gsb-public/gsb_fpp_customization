@@ -2,6 +2,9 @@
 
 /**
  * Implementation of hook_form_alter()
+ * 
+ * This function will add a select dropdown with the workbench sections as option
+ * choices for the user.
  */
 function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 
@@ -36,7 +39,8 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Preprocess the panels_add_content_modal() function to add the HTML for the preview
+ * Preprocess the panels_add_content_modal() function to remove any c
+ * categories (workbench sections) that the user doesn't have access to.
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
@@ -48,10 +52,6 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     $active_category_ids = array_keys($active['tree']);
     
     $workbench_access = $user->workbench_access;
-
-    if (empty($workbench_access)) {
-      return;
-    }
   
     // find the categories that are not accessable to the user ...
   
@@ -65,16 +65,16 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     
     // ... and remove them from the list that is displayed
 
-    foreach($remove_items as $key => $value) {
-      if (isset($vars['categories'][$value])) {
-        $root_index = array_search('root',array_keys($vars['categories']));
-        $index = array_search($value,array_keys($vars['categories']));
-        if ($index > $root_index) {
-          $index--;
-        }
-        unset($vars['categories'][$value]);
-        unset($vars['categories_array'][$index]);
+    $index = 0;
+    foreach($vars['categories'] as $key => $value) {
+      if ($key == 'root') {
+        continue;
       }
+      if (in_array($key, $remove_items)) {
+        unset($vars['categories_array'][$index]);
+        unset($vars['categories'][$key]);
+      }
+      $index++;
     }
 
 }

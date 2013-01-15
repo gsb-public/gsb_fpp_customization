@@ -48,6 +48,10 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     $active_category_ids = array_keys($active['tree']);
     
     $workbench_access = $user->workbench_access;
+
+    if (empty($workbench_access)) {
+      return;
+    }
   
     // find the categories that are not accessable to the user ...
   
@@ -74,4 +78,3 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     }
 
 }
-

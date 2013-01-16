@@ -2,9 +2,6 @@
 
 /**
  * Implementation of hook_form_alter()
- * 
- * This function will add a select dropdown with the workbench sections as option
- * choices for the user.
  */
 function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 
@@ -27,7 +24,8 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 
     if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
       $form['reusable']['category']['#value'] = $form_state['input']['category'];
-    } else {
+    }
+    else {
       $form['reusable']['category']['#value'] = '';
     }
     
@@ -39,8 +37,7 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Preprocess the panels_add_content_modal() function to remove any
- * categories (workbench sections) that the user doesn't have access to.
+ * Preprocess the panels_add_content_modal() function to add the HTML for the preview
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
@@ -52,6 +49,11 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     $active_category_ids = array_keys($active['tree']);
     
     $workbench_access = $user->workbench_access;
+
+    /*
+    if (empty($workbench_access)) {
+      return;
+    }*/
   
     // find the categories that are not accessable to the user ...
   
@@ -78,3 +80,42 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     }
 
 }
+
+function gsb_fpp_customization_page_alter(&$page) {
+
+  global $user;
+
+  if (arg(0) == 'node') {
+    $nid = arg(1);
+  } else {
+    return;
+  }
+
+  if (isset($page['page_bottom']['panels_ipe'])) {
+
+    $active = workbench_access_get_active_tree();
+
+    $result = db_select('workbench_access_node', 'wan')
+      ->fields('wan', array('nid', 'access_id', 'access_scheme'))
+      ->condition('nid', $nid)
+      ->execute()
+      ->fetchAssoc();
+
+    workbench_access_user_load_data($user);
+    $workbench_access = $user->workbench_access;
+
+    $access_id = "";
+
+    if (isset($result['access_id'])) {
+      $access_id = $result['access_id'];
+    }
+
+    if (!isset($workbench_access[$access_id])) {
+      unset($page['page_bottom']['panels_ipe']);
+    }
+
+  }
+}
+
+
+

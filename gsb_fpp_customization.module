@@ -9,12 +9,12 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
 
     global $user;
-    
+
     workbench_access_user_load_data($user);
     $active = workbench_access_get_active_tree();
     $account_access = array_keys($user->workbench_access);
 
-    $category = array();
+    $categories = array();
 
     foreach ($account_access as $key => $value) {
       if (isset($active['tree'][$value])) {
@@ -23,17 +23,20 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
       }
     }
 
-    if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
-      $form['reusable']['category']['#value'] = $form_state['input']['category'];
-    } else {
-      $form['reusable']['category']['#value'] = '';
+    if (!empty($categories)) {
+      if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
+        $form['reusable']['category']['#value'] = $form_state['input']['category'];
+      } else {
+        $form['reusable']['category']['#value'] = '';
+      }
+
+      $form['reusable']['category']['#type'] = 'select';
+      $form['reusable']['category']['#options'] = $categories;
     }
-    
-    $form['reusable']['category']['#type'] = 'select';
-    $form['reusable']['category']['#options'] = $categories;
-
+    else {
+      $form['reusable']['#access'] = FALSE;
+    }
   }
-
 }
 
 /**
@@ -45,14 +48,14 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
     global $user;
 
     workbench_access_user_load_data($user);
-  
+
     $active = workbench_access_get_active_tree();
     $active_category_ids = array_keys($active['tree']);
-    
+
     $workbench_access = $user->workbench_access;
-  
+
     // find the categories that are not accessable to the user ...
-  
+
     $remove_items = array();
 
     foreach ($active_category_ids as $key => $value) {
@@ -60,7 +63,7 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
         $remove_items[] = $active['tree'][$value]['name'];
       }
     }
-    
+
     // ... and remove them from the list that is displayed
 
     $index = 0;

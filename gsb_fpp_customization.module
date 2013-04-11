@@ -42,26 +42,20 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     }
 
     // adjust the view_mode 
-    
-    if (isset($form['view_mode']['#options'])) {
-      if ($form['#bundle'] == 'existing_node' && in_array('marketing_admin', $user->roles)) {
-        // for the 'existing_node' fpp when...
-        // the user has the 'marketing_admin' role,
-        // then remove all the options except - 'full' and 'megamenu' and...
-        // set the view_mode default to 'megamenu'
-        unset($form['view_mode']['#options']);
-        $form['view_mode']['#options']['full'] = 'Full';
-        $form['view_mode']['#options']['megamenu'] = 'Megamenu';
-        $form['view_mode']['#default_value'] = 'megamenu';
-      }
-      else {
-        // set the view_mode default to 'full' and hide the field
-        $form['view_mode']['#default_value'] = 'full';
-        $form['view_mode']['#access'] = FALSE;
-      }
+
+    list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
+
+    $form['view_mode']['#type'] = 'value';
+  
+    if ($form['#bundle'] == 'existing_node' && $panels_module == 'panels_mini' &&
+        in_array($type, array('business_insights', 'faculty_research', 'our_programs', 'the_stanford_gsb_experience'))) {
+      $form['view_mode']['#value'] = 'megamenu';
+    }
+    else {
+      $form['view_mode']['#value'] = 'full';
     }
 
-  }  
+  }
 }
 
 

@@ -10,6 +10,8 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 
     global $user;
 
+    // only show the pane categories the user has wb access to
+
     workbench_access_user_load_data($user);
     $active = workbench_access_get_active_tree();
     $account_access = array_keys($user->workbench_access);
@@ -22,6 +24,8 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
         $categories[$category] = $category;
       }
     }
+
+    // adjust the visibility of reusable checkbox
 
     if (!empty($categories)) {
       if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
@@ -36,8 +40,30 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     else {
       $form['reusable']['#access'] = FALSE;
     }
-  }
+
+    // adjust the view_mode 
+    
+    if (isset($form['view_mode']['#options'])) {
+      if ($form['#bundle'] == 'existing_node' && in_array('marketing_admin', $user->roles)) {
+        // for the 'existing_node' fpp when...
+        // the user has the 'marketing_admin' role,
+        // then remove all the options except - 'full' and 'megamenu' and...
+        // set the view_mode default to 'megamenu'
+        unset($form['view_mode']['#options']);
+        $form['view_mode']['#options']['full'] = 'Full';
+        $form['view_mode']['#options']['megamenu'] = 'Megamenu';
+        $form['view_mode']['#default_value'] = 'megamenu';
+      }
+      else {
+        // set the view_mode default to 'full' and hide the field
+        $form['view_mode']['#default_value'] = 'full';
+        $form['view_mode']['#access'] = FALSE;
+      }
+    }
+
+  }  
 }
+
 
 /**
  * Preprocess the panels_add_content_modal() function to remove any

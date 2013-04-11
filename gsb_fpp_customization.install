@@ -4,6 +4,7 @@
  * Implements hook_install().
  */
 function gsb_fpp_customization_install() {
+/**
   // Make the weight of our module one higher than workbench_access.
   $weight = db_select('system', 's')
               ->fields('s', array('weight'))
@@ -15,4 +16,5 @@ function gsb_fpp_customization_install() {
     ->fields(array('weight' => $weight +1))
     ->condition('name', 'gsb_fpp_customization', '=')
     ->execute();
+**/
 }

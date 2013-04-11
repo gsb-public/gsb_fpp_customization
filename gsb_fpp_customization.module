@@ -41,7 +41,7 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
       $form['reusable']['#access'] = FALSE;
     }
 
-    // adjust the view_mode 
+    // adjust the view_mode
 
     list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
 
@@ -54,6 +54,17 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     else {
       $form['view_mode']['#value'] = 'full';
     }
+
+    // hide the title field
+    $form['title']['#access'] = FALSE;
+
+    // hide the 'make title a link' field
+    $form['link']['#access'] = FALSE;
+
+    // hide the revision field and...
+    // set the value to always be false
+    $form['revision']['#access'] = FALSE;
+    $form['revision']['revision']['#value'] = 0;
 
   }
 }

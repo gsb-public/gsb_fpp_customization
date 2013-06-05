@@ -1,6 +1,40 @@
 <?php
 
 /**
+ * Implements hook_library()
+ */
+function gsb_fpp_customization_library() {
+
+  $libraries['superfish'] = array(
+    'title' => 'Superfish',
+    'website' => 'https://github.com/joeldbirch/superfish',
+    'version' => '1.7.3',
+    'js' => array(
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/js/hoverIntent.js' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/js/superfish.js' => array(),
+    ),
+    'css' => array(
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/css/superfish.css' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/css/superfish-vertical.css' => array(),
+    ),
+  );
+
+  $libraries['gsb_fpp_customization'] = array(
+    'title' => 'GSB Fpp Customization',
+    'website' => 'https://github.com/gsbitse/gsb_fpp_customization',
+    'version' => '',
+    'js' => array(
+      drupal_get_path('module', 'gsb_fpp_customization') . '/js/gsb_fpp_customization.js' => array(),
+    ),
+    'dependencies' => array(
+      array('gsb_fpp_customization', 'superfish'),
+    ),
+  );
+
+  return $libraries;
+}
+
+/**
  * This function will add a select dropdown with the workbench sections as option
  * choices for the user.
  */
@@ -69,7 +103,6 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
   }
 }
 
-
 /**
  * Preprocess the panels_add_content_modal() function to remove any
  * categories (workbench sections) that the user doesn't have access to.
@@ -77,6 +110,8 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
     global $user;
+
+    drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
     workbench_access_user_load_data($user);
 
@@ -108,5 +143,4 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
       }
       $index++;
     }
-
 }

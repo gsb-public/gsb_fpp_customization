@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * Implements hook_module_implements_alter()
+ */
+function gsb_fpp_customization_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'form_alter') {
+    $group = $implementations['gsb_fpp_customization'];
+    unset($implementations['gsb_fpp_customization']);
+    $implementations['gsb_fpp_customization'] = $group;
+  }
+}
+
+/**
  * Implements hook_library()
  */
 function gsb_fpp_customization_library() {
@@ -35,11 +46,22 @@ function gsb_fpp_customization_library() {
 }
 
 /**
+ * Implements hook_form_FORM_ID_alter()
+ *
+ * This function will add back the cancel button that panopoly_magic had removed
+ */
+function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
+  if (isset($form['buttons']['cancel']['#access'])) {
+    unset($form['buttons']['cancel']['#access']);
+  }
+}
+
+/**
  * This function will add a select dropdown with the workbench sections as option
  * choices for the user.
  */
 function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
-
+  
   if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
 
     global $user;

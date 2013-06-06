@@ -4,11 +4,10 @@
  * Implements hook_install().
  */
 function gsb_fpp_customization_install() {
-/**
-  // Make the weight of our module one higher than workbench_access.
+  // Make the weight of our module one higher than panopoly_magic.
   $weight = db_select('system', 's')
               ->fields('s', array('weight'))
-              ->condition('name', 'panopoly_widgets', '=')
+              ->condition('name', 'panopoly_magic', '=')
               ->execute()
               ->fetchField();
 
@@ -16,5 +15,4 @@ function gsb_fpp_customization_install() {
     ->fields(array('weight' => $weight +1))
     ->condition('name', 'gsb_fpp_customization', '=')
     ->execute();
-**/
 }

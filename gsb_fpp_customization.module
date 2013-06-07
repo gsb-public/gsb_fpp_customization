@@ -165,4 +165,38 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
       }
       $index++;
     }
+
+    // load the preview icons
+
+    $icons = array();
+
+    if (!empty($vars['categories'][$vars['category']]['content'])) {
+      foreach ($vars['categories'][$vars['category']]['content'] as $key => $value) {
+        $type_name = $value['type_name'];
+        $subtype_name = $value['subtype_name'];
+        $icons[$type_name . ':' . $subtype_name] = array('icon' => 'test');
+      }
+    }
+
+    // have each module add their preview icon
+    drupal_alter('gsb_fpp_customizations_icons', $icons);
+
+    // render the icon as the preview for the content
+    if (!empty($vars['categories'][$vars['category']]['content'])) {
+      foreach ($vars['categories'][$vars['category']]['content'] as &$content) {
+        $type_name = $content['type_name'];
+        $subtype_name = $content['subtype_name'];
+        $icon_key = $type_name . ':' . $subtype_name;
+        if (isset($icons[$icon_key])) {
+          $image_vars = array(
+            'item' => array(
+              'uri' => $icons[$icon_key]['icon'],
+            ),
+          );
+          // todo: need to finish this up... but need to work on another priority right now
+          //$plugin['preview'] = theme('image_formatter', $image_vars);
+        }
+      }
+    }
+
 }

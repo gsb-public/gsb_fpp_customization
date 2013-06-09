@@ -174,7 +174,7 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
       foreach ($vars['categories'][$vars['category']]['content'] as $key => $value) {
         $type_name = $value['type_name'];
         $subtype_name = $value['subtype_name'];
-        $icons[$type_name . ':' . $subtype_name] = array('icon' => 'test');
+        $icons[$type_name . ':' . $subtype_name] = array('icon' => '');
       }
     }
 
@@ -187,14 +187,13 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
         $type_name = $content['type_name'];
         $subtype_name = $content['subtype_name'];
         $icon_key = $type_name . ':' . $subtype_name;
-        if (isset($icons[$icon_key])) {
+        if (isset($icons[$icon_key]) && !empty($icons[$icon_key]['icon'])) {
           $image_vars = array(
             'item' => array(
               'uri' => $icons[$icon_key]['icon'],
             ),
           );
-          // todo: need to finish this up... but need to work on another priority right now
-          //$plugin['preview'] = theme('image_formatter', $image_vars);
+          $content['preview'] = theme('image_formatter', $image_vars);
         }
       }
     }

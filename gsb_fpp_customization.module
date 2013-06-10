@@ -226,9 +226,11 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   // reorder the display order of the categories_array to follow this order
 
-  $order_items = array( 'content-panes' => array_search('content-panes', array_keys($vars['categories']))
-                      , 'blocks' => array_search('blocks', array_keys($vars['categories']))
-                      , 'other' => array_search('other', array_keys($vars['categories'])));
+  $order_items = array(
+    'blocks' => array_search('blocks', array_keys($vars['categories'])),
+    'content-panes' => array_search('content-panes', array_keys($vars['categories'])),
+    'other' => array_search('other', array_keys($vars['categories']))
+  );
 
   $neworder_categories_array = array();
   foreach($order_items as $key => $value) {

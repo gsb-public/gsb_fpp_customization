@@ -126,76 +126,151 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Preprocess the panels_add_content_modal() function to remove any
- * categories (workbench sections) that the user doesn't have access to.
+ * Preprocess panels_add_content_modal() to...
+ *
+ * 1. Change the title for the 'Blocks' category.
+ * 2. Remove any categories that the user doesn't have access to or...
+ * 3. Reorder the display of the categories
+ * 4. Load the preview icons
+ *
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
-    global $user;
+  drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
-    drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
+  // change the title of the "Blocks" category
+  _gsb_fpp_customization_retitle_blocks_category($vars);
 
-    workbench_access_user_load_data($user);
+  // remove any categories where the user doesn't have access or...
+  // ones we don't want displayed
+  _gsb_fpp_customization_remove_categories($vars);
 
-    $active = workbench_access_get_active_tree();
-    $active_category_ids = array_keys($active['tree']);
+  // reorder categories
+  _gsb_fpp_customization_reorder_categories($vars);
 
-    $workbench_access = $user->workbench_access;
+  // load the preview icons
+  _gsb_fpp_customization_load_preview_icons($vars);
 
-    // find the categories that are not accessable to the user ...
+}
 
-    $remove_items = array();
+function _gsb_fpp_customization_retitle_blocks_category(&$vars) {
 
-    foreach ($active_category_ids as $key => $value) {
-      if (!isset($workbench_access[$value])) {
-        $remove_items[] = $active['tree'][$value]['name'];
-      }
-    }
+  // change the title of the "Blocks" category to be more specific to the
+  // CTA content that in this category
 
-    // ... and remove them from the list that is displayed
-
+  if ($vars['categories']['blocks']['title']) {
+    $vars['categories']['blocks']['title'] = 'Preformatted CTA';
+    $url = $vars['renderer']->get_url('select-content', $vars['region'], 'blocks');
+    $text_button = ctools_ajax_text_button('Preformatted CTA', $url, '', 'panels-modal-add-category');
     $index = 0;
     foreach($vars['categories'] as $key => $value) {
-      if ($key == 'root') {
-        continue;
-      }
-      if (in_array($key, $remove_items)) {
-        unset($vars['categories_array'][$index]);
-        unset($vars['categories'][$key]);
+      if ($key == 'blocks') {
+        break;
       }
       $index++;
     }
+    $vars['categories_array'][$index] = $text_button;
+  }
 
-    // load the preview icons
+}
 
-    $icons = array();
+function _gsb_fpp_customization_remove_categories(&$vars) {
 
-    if (!empty($vars['categories'][$vars['category']]['content'])) {
-      foreach ($vars['categories'][$vars['category']]['content'] as $key => $value) {
-        $type_name = $value['type_name'];
-        $subtype_name = $value['subtype_name'];
-        $icons[$type_name . ':' . $subtype_name] = array('icon' => '');
+  global $user;
+
+  // get the user's access
+
+  workbench_access_user_load_data($user);
+
+  $active = workbench_access_get_active_tree();
+  $active_category_ids = array_keys($active['tree']);
+
+  $workbench_access = $user->workbench_access;
+
+  // find the categories that are not accessable to the user ...
+
+  $remove_items = array();
+
+  foreach ($active_category_ids as $key => $value) {
+    if (!isset($workbench_access[$value])) {
+      $remove_items[] = $active['tree'][$value]['name'];
+    }
+  }
+
+  // ... also add in some other categories we just want to remove
+
+  $other_items = array('display-suite', 'gsb-panes', 'entity', 'node', 'view-panes', 'menu');
+  $remove_items = array_merge($remove_items, $other_items);
+
+  // ... and remove them from the list that is displayed
+
+  $index = 0;
+  foreach($vars['categories'] as $key => $value) {
+    if ($key == 'root') {
+      continue;
+    }
+    if (in_array($key, $remove_items)) {
+      unset($vars['categories_array'][$index]);
+      unset($vars['categories'][$key]);
+    }
+    $index++;
+  }
+
+  // after yanking items out of the categories_array be need to
+  // rekey the categories_array to be 0, 1, 2...
+  $vars['categories_array'] = array_values($vars['categories_array']);
+
+}
+
+function _gsb_fpp_customization_reorder_categories(&$vars) {
+
+  // reorder the display order of the categories_array to follow this order
+
+  $order_items = array( 'content-panes' => array_search('content-panes', array_keys($vars['categories']))
+                      , 'blocks' => array_search('blocks', array_keys($vars['categories']))
+                      , 'other' => array_search('other', array_keys($vars['categories'])));
+
+  $neworder_categories_array = array();
+  foreach($order_items as $key => $value) {
+    $neworder_categories_array[] = $vars['categories_array'][$value];
+  }
+
+  $vars['categories_array'] = $neworder_categories_array;
+
+}
+
+function _gsb_fpp_customization_load_preview_icons(&$vars) {
+
+  // load the preview icons
+
+  $icons = array();
+
+  if (!empty($vars['categories'][$vars['category']]['content'])) {
+    foreach ($vars['categories'][$vars['category']]['content'] as $key => $value) {
+      $type_name = $value['type_name'];
+      $subtype_name = $value['subtype_name'];
+      $icons[$type_name . ':' . $subtype_name] = array('icon' => '');
+    }
+  }
+
+  // have each module add their preview icon
+  drupal_alter('gsb_fpp_customizations_icons', $icons);
+
+  // render the icon as the preview for the content
+  if (!empty($vars['categories'][$vars['category']]['content'])) {
+    foreach ($vars['categories'][$vars['category']]['content'] as &$content) {
+      $type_name = $content['type_name'];
+      $subtype_name = $content['subtype_name'];
+      $icon_key = $type_name . ':' . $subtype_name;
+      if (isset($icons[$icon_key]) && !empty($icons[$icon_key]['icon'])) {
+        $image_vars = array(
+          'item' => array(
+            'uri' => $icons[$icon_key]['icon'],
+          ),
+        );
+        $content['preview'] = theme('image_formatter', $image_vars);
       }
     }
-
-    // have each module add their preview icon
-    drupal_alter('gsb_fpp_customizations_icons', $icons);
-
-    // render the icon as the preview for the content
-    if (!empty($vars['categories'][$vars['category']]['content'])) {
-      foreach ($vars['categories'][$vars['category']]['content'] as &$content) {
-        $type_name = $content['type_name'];
-        $subtype_name = $content['subtype_name'];
-        $icon_key = $type_name . ':' . $subtype_name;
-        if (isset($icons[$icon_key]) && !empty($icons[$icon_key]['icon'])) {
-          $image_vars = array(
-            'item' => array(
-              'uri' => $icons[$icon_key]['icon'],
-            ),
-          );
-          $content['preview'] = theme('image_formatter', $image_vars);
-        }
-      }
-    }
+  }
 
 }

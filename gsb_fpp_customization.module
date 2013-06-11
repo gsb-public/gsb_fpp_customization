@@ -51,9 +51,30 @@ function gsb_fpp_customization_library() {
  * This function will add back the cancel button that panopoly_magic had removed
  */
 function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
+  
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
+    $form['buttons']['#weight'] = 1000;
   }
+
+  drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
+
+  $form['buttons']['cancel_link'] = array(
+    '#type' => 'link',
+    '#title' => t('Cancel'),
+    '#href' => '#',
+    '#weight' => 100,
+    '#id' => 'cancel-link',
+  );  
+
+  $form['back_link'] = array(
+    '#type' => 'link',
+    '#title' => t('Back to Add Content'),
+    '#href' => '#',
+    '#weight' => -99,
+    '#id' => 'back-link',
+  );
+
 }
 
 /**
@@ -123,6 +144,14 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     $form['revision']['revision']['#value'] = 0;
 
   }
+}
+
+/**
+ * Preprocess the add content link used in the modal.
+ */
+function gsb_fpp_customization_preprocess_panels_add_content_link(&$vars) {
+  $test = 'test';
+  $vars['menu_item'] = TRUE;
 }
 
 /**

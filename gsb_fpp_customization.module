@@ -147,14 +147,6 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Preprocess the add content link used in the modal.
- */
-function gsb_fpp_customization_preprocess_panels_add_content_link(&$vars) {
-  $test = 'test';
-  $vars['menu_item'] = TRUE;
-}
-
-/**
  * Preprocess panels_add_content_modal() to...
  *
  * 1. Change the title for the 'Blocks' category.

@@ -65,6 +65,13 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
 
 }
 
+function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
+
+  // Alter the add_content_modal forms...
+  _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
+
+}
+
 /**
  *
  * Alter the add_content_modal forms...

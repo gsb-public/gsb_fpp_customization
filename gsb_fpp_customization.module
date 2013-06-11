@@ -51,7 +51,7 @@ function gsb_fpp_customization_library() {
  * This function will add back the cancel button that panopoly_magic had removed
  */
 function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
-  
+
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
     $form['buttons']['#weight'] = 1000;
@@ -143,6 +143,21 @@ function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
     $form['revision']['#access'] = FALSE;
     $form['revision']['revision']['#value'] = 0;
 
+  }
+}
+
+/**
+ * Process the panels add content modal to...
+ *
+ * Replace the default header (boring) with a list all the content links,
+ * on the first page of the panels_add_content_modal.
+ * 
+ */
+function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
+  $vars['first_page'] = FALSE;
+  if ($vars['category'] == null) {
+    $vars['first_page'] = TRUE;
+    unset($vars['header']);
   }
 }
 

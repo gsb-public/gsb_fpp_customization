@@ -47,10 +47,33 @@ function gsb_fpp_customization_library() {
 
 /**
  * Implements hook_form_FORM_ID_alter()
- *
- * This function will add back the cancel button that panopoly_magic had removed
+ */
+function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
+
+  // Alter the add_content_modal forms...
+  _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
+
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
  */
 function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
+
+  // Alter the add_content_modal forms...
+  _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
+
+}
+
+/**
+ *
+ * Alter the add_content_modal forms...
+ *
+ * 1. add back the cancel button that panopoly_magic had removed, but the js will hide it.
+ * 2. add 'back' and 'cancel' links to the form
+ *
+ */
+function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
 
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
@@ -65,7 +88,7 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
     '#href' => '#',
     '#weight' => 100,
     '#id' => 'cancel-link',
-  );  
+  );
 
   $form['back_link'] = array(
     '#type' => 'link',

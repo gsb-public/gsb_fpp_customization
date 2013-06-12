@@ -1,19 +1,6 @@
 <?php
 
 /**
- * Implements hook_module_implements_alter()
- */
-/*
-function gsb_fpp_customization_module_implements_alter(&$implementations, $hook) {
-  if ($hook == 'form_alter') {
-    $group = $implementations['gsb_fpp_customization'];
-    unset($implementations['gsb_fpp_customization']);
-    $implementations['gsb_fpp_customization'] = $group;
-  }
-}
-*/
-
-/**
  * Implements hook_library()
  */
 function gsb_fpp_customization_library() {
@@ -142,12 +129,17 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
  */
 function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
 
-/*
+  // todo: Would be nice to clean up later, if possible.
+  // The following commented code is now running in gsb_panopoly_magic_customization...
+  // to get around a function call order issue between this module and 
+  // panopoly magic. 
+
+  /*
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
     $form['buttons']['#weight'] = 1000;
   }
-*/  
+  */  
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 

@@ -3,6 +3,7 @@
 /**
  * Implements hook_module_implements_alter()
  */
+/*
 function gsb_fpp_customization_module_implements_alter(&$implementations, $hook) {
   if ($hook == 'form_alter') {
     $group = $implementations['gsb_fpp_customization'];
@@ -10,6 +11,7 @@ function gsb_fpp_customization_module_implements_alter(&$implementations, $hook)
     $implementations['gsb_fpp_customization'] = $group;
   }
 }
+*/
 
 /**
  * Implements hook_library()
@@ -67,6 +69,64 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
 
 function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
+  global $user;
+
+  // only show the pane categories the user has wb access to
+
+  workbench_access_user_load_data($user);
+  $active = workbench_access_get_active_tree();
+  $account_access = array_keys($user->workbench_access);
+
+  $categories = array();
+
+  foreach ($account_access as $key => $value) {
+    if (isset($active['tree'][$value])) {
+      $category = $active['tree'][$value]['name'];
+      $categories[$category] = $category;
+    }
+  }
+
+  // adjust the visibility of reusable checkbox
+
+  if (!empty($categories)) {
+    if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
+      $form['reusable']['category']['#value'] = $form_state['input']['category'];
+    } else {
+      $form['reusable']['category']['#value'] = '';
+    }
+
+    $form['reusable']['category']['#type'] = 'select';
+    $form['reusable']['category']['#options'] = $categories;
+  }
+  else {
+    $form['reusable']['#access'] = FALSE;
+  }
+
+  // adjust the view_mode
+
+  list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
+
+  $form['view_mode']['#type'] = 'value';
+
+  if ($form['#bundle'] == 'existing_node' && $panels_module == 'panels_mini' &&
+      in_array($type, array('business_insights', 'faculty_research', 'our_programs', 'the_stanford_gsb_experience'))) {
+    $form['view_mode']['#value'] = 'megamenu';
+  }
+  else {
+    $form['view_mode']['#value'] = 'full';
+  }
+
+  // hide the title field
+  $form['title']['#access'] = FALSE;
+
+  // hide the 'make title a link' field
+  $form['link']['#access'] = FALSE;
+
+  // hide the revision field and...
+  // set the value to always be false
+  $form['revision']['#access'] = FALSE;
+  $form['revision']['revision']['#value'] = 0;
+
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
@@ -82,10 +142,12 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
  */
 function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
 
+/*
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
     $form['buttons']['#weight'] = 1000;
   }
+*/  
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
@@ -108,80 +170,11 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 }
 
 /**
- * This function will add a select dropdown with the workbench sections as option
- * choices for the user.
- */
-function gsb_fpp_customization_form_alter(&$form, &$form_state, $form_id) {
-  
-  if ($form_id == 'fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form') {
-
-    global $user;
-
-    // only show the pane categories the user has wb access to
-
-    workbench_access_user_load_data($user);
-    $active = workbench_access_get_active_tree();
-    $account_access = array_keys($user->workbench_access);
-
-    $categories = array();
-
-    foreach ($account_access as $key => $value) {
-      if (isset($active['tree'][$value])) {
-        $category = $active['tree'][$value]['name'];
-        $categories[$category] = $category;
-      }
-    }
-
-    // adjust the visibility of reusable checkbox
-
-    if (!empty($categories)) {
-      if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
-        $form['reusable']['category']['#value'] = $form_state['input']['category'];
-      } else {
-        $form['reusable']['category']['#value'] = '';
-      }
-
-      $form['reusable']['category']['#type'] = 'select';
-      $form['reusable']['category']['#options'] = $categories;
-    }
-    else {
-      $form['reusable']['#access'] = FALSE;
-    }
-
-    // adjust the view_mode
-
-    list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
-
-    $form['view_mode']['#type'] = 'value';
-  
-    if ($form['#bundle'] == 'existing_node' && $panels_module == 'panels_mini' &&
-        in_array($type, array('business_insights', 'faculty_research', 'our_programs', 'the_stanford_gsb_experience'))) {
-      $form['view_mode']['#value'] = 'megamenu';
-    }
-    else {
-      $form['view_mode']['#value'] = 'full';
-    }
-
-    // hide the title field
-    $form['title']['#access'] = FALSE;
-
-    // hide the 'make title a link' field
-    $form['link']['#access'] = FALSE;
-
-    // hide the revision field and...
-    // set the value to always be false
-    $form['revision']['#access'] = FALSE;
-    $form['revision']['revision']['#value'] = 0;
-
-  }
-}
-
-/**
  * Process the panels add content modal to...
  *
  * Replace the default header (boring) with a list all the content links,
  * on the first page of the panels_add_content_modal.
- * 
+ *
  */
 function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
 

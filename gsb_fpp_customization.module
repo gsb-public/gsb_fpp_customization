@@ -77,9 +77,9 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
 
   if (!empty($categories)) {
     if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
-      $form['reusable']['category']['#value'] = $form_state['input']['category'];
+      $form['reusable']['category']['#default_value'] = $form_state['input']['category'];
     } else {
-      $form['reusable']['category']['#value'] = '';
+      $form['reusable']['category']['#default_value'] = '';
     }
 
     $form['reusable']['category']['#type'] = 'select';
@@ -131,15 +131,15 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
   // todo: Would be nice to clean up later, if possible.
   // The following commented code is now running in gsb_panopoly_magic_customization...
-  // to get around a function call order issue between this module and 
-  // panopoly magic. 
+  // to get around a function call order issue between this module and
+  // panopoly magic.
 
   /*
   if (isset($form['buttons']['cancel']['#access'])) {
     unset($form['buttons']['cancel']['#access']);
     $form['buttons']['#weight'] = 1000;
   }
-  */  
+  */
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
@@ -295,13 +295,46 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
 
 function _gsb_fpp_customization_reorder_categories(&$vars) {
 
-  // reorder the display order of the categories_array to follow this order
+  global $user;
+
+  $category_keys = array_keys($vars['categories']);
+
+  // reorder the display of the categories_array to follow this order:
+  // 'blocks', 'content-panes', <any sections>, and 'other'
 
   $order_items = array(
-    'blocks' => array_search('blocks', array_keys($vars['categories'])),
-    'content-panes' => array_search('content-panes', array_keys($vars['categories'])),
-    'other' => array_search('other', array_keys($vars['categories']))
+    'blocks' => array_search('blocks', $category_keys),
+    'content-panes' => array_search('content-panes', $category_keys),
   );
+
+  // find any categories that are left
+
+  $diff_keys = array_diff_key($vars['categories'], $order_items);
+
+  // remove 'other' and 'root'
+  // we don't 'root'... so bye bye
+  // and we will be adding 'other' back at the end of the order items
+
+  if (isset($diff_keys['root'])) {
+    unset($diff_keys['root']);
+  }
+
+  if (isset($diff_keys['other'])) {
+    unset($diff_keys['other']);
+  }
+
+  // and now what remains in diff should be the section categories
+
+  foreach($diff_keys as $key => $value) {
+    $order_items[$key] = array_search($key, $category_keys);
+  }
+
+  // only display the 'other' category if the user has the admin role
+  if (in_array('administrator', array_values($user->roles))) {
+    $order_items['other'] = array_search('other', $category_keys);
+  }
+
+  // now grab up the categories in the desired order
 
   $neworder_categories_array = array();
   foreach($order_items as $key => $value) {

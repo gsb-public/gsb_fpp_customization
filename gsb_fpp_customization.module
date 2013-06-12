@@ -84,6 +84,8 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
 
     $form['reusable']['category']['#type'] = 'select';
     $form['reusable']['category']['#options'] = $categories;
+
+    $form['reusable']['category']['#title'] = t('Sections');
   }
   else {
     $form['reusable']['#access'] = FALSE;

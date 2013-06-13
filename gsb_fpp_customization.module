@@ -179,7 +179,7 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
 
   $vars['first_page'] = FALSE;
-  if ($vars['category'] == null) {
+  if ($vars['category'] == null || $vars['category'] == 'root') {
     $vars['first_page'] = TRUE;
     unset($vars['header']);
   }

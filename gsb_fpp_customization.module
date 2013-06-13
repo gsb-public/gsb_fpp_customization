@@ -148,17 +148,23 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
   $form['buttons']['cancel_link'] = array(
     '#type' => 'link',
     '#title' => t('Cancel'),
-    '#href' => '#',
+    '#href' => '',
     '#weight' => 100,
     '#id' => 'cancel-link',
+    '#options' => array(
+      'fragment' => 'cancel',
+    ),
   );
 
   $form['back_link'] = array(
     '#type' => 'link',
     '#title' => t('Back to Add Content'),
-    '#href' => '#',
+    '#href' => '',
     '#weight' => -99,
     '#id' => 'back-link',
+    '#options' => array(
+      'fragment' => 'back-link',
+    ),
   );
 
 }

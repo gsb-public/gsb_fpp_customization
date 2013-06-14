@@ -300,11 +300,10 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
   $other_items = array('display-suite', 'gsb-panes', 'entity', 'node', 'view-panes', 'menu');
   $remove_items = array_merge($remove_items, $other_items);
 
-  // if remove_items has "Administrators" change it to "administrators"
+  // changed remove_items to be lowercase for later comparision
   foreach($remove_items as $key => $value) {
-    if ($value == 'Administrators') {
-      $remove_items[$key] = 'administrators';
-    }
+    $value = strtolower($value);
+    $remove_items[$key] = $value;
   }
 
   // ... and remove them from the list that is displayed

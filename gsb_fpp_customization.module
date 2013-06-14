@@ -292,6 +292,13 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
   $other_items = array('display-suite', 'gsb-panes', 'entity', 'node', 'view-panes', 'menu');
   $remove_items = array_merge($remove_items, $other_items);
 
+  // if remove_items has "Administrators" change it to "administrators"
+  foreach($remove_items as $key => $value) {
+    if ($value == 'Administrators') {
+      $remove_items[$key] = 'administrators';
+    }
+  }
+
   // ... and remove them from the list that is displayed
 
   $index = 0;

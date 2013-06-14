@@ -76,8 +76,8 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   // adjust the visibility of reusable checkbox
 
   if (!empty($categories)) {
-    if (isset($form_state['process_input']) && $form_state['process_input'] == TRUE) {
-      $form['reusable']['category']['#default_value'] = $form_state['input']['category'];
+    if (isset($form_state['entity'])) {
+      $form['reusable']['category']['#default_value'] = $form_state['entity']->category;
     } else {
       $form['reusable']['category']['#default_value'] = '';
     }
@@ -115,6 +115,8 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   // set the value to always be false
   $form['revision']['#access'] = FALSE;
   $form['revision']['revision']['#value'] = 0;
+
+  $form['#validate'][] = 'gsb_fpp_customization_fpp_edit_form_validate';
 
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
@@ -167,6 +169,15 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
     ),
   );
 
+}
+
+function gsb_fpp_customization_fpp_edit_form_validate(&$form, &$form_state) {
+  if (isset($form_state['values']['reusable']) && $form_state['values']['reusable'] == 1) {
+    $admin_title = $form_state['values']['admin_title'];
+    if (empty($admin_title)) {
+      form_set_error('admin_title','Element Title field is required.');
+    }
+  }
 }
 
 /**

@@ -189,6 +189,8 @@ function gsb_fpp_customization_fpp_edit_form_validate(&$form, &$form_state) {
  */
 function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
 
+  global $user;
+
   $vars['first_page'] = FALSE;
   if ($vars['category'] == null || $vars['category'] == 'root') {
     $vars['first_page'] = TRUE;
@@ -202,6 +204,12 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
       continue;
     }
     $category_title = $value['title'];
+    if ($category == 'other') {
+      // only display the 'other' category if the user has the admin role
+      if (!in_array('administrator', array_values($user->roles))) {
+        continue;
+      }
+    }
     foreach($vars['categories'][$category]['content'] as $content) {
       $vars['first_page_links'][$category_title][] = array(
         'link' => theme('panels_add_content_link', array(

@@ -383,8 +383,13 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
 function _gsb_fpp_customization_add_quicklinks(&$vars) {
 
+  $active_class = '';
+  if ($vars['category'] == null || $vars['category'] == 'root') {
+    $active_class = ' active ';
+  }
+
   $url = $vars['renderer']->get_url('select-content', $vars['region']);
-  $text_button = ctools_ajax_text_button('Quick Links', $url, '', 'panels-modal-add-category');
+  $text_button = ctools_ajax_text_button('Quick Links', $url, '', 'panels-modal-add-category' . $active_class);
 
   array_unshift($vars['categories_array'], $text_button);
 

@@ -469,6 +469,18 @@ function _gsb_fpp_customization_load_preview_icons(&$vars) {
           ),
         );
         $content['preview'] = theme('image_formatter', $image_vars);
+      } else {
+        // if there isn't an icon, then see if we can display the description
+        if (isset($content['description']) && !empty($content['description'])) {
+          $description = theme_html_tag(array(
+            'element' => array(
+              '#tag' => 'span',
+              '#value' => $content['description'],
+              '#attributes' => array('class' => 'element-description')
+            )
+          ));
+          $content['preview'] = $description . '</br>' . $content['preview'];
+        }
       }
     }
   }

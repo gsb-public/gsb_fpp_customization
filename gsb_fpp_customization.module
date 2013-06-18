@@ -360,6 +360,13 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
     }
   }
 
+  // add 'stock content' to the list of removed categories...
+  // if the user doesn't have permission
+
+  if (!user_access('add stock content')) {
+    $remove_items[] = 'stock-content';
+  }
+
   // ... also add in some other categories we just want to remove
 
   $other_items = array('display-suite', 'gsb-panes', 'entity', 'node', 'view-panes', 'menu');

@@ -56,6 +56,29 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
 
 function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
+  // Customize the 'reusable' portion of the fpp form
+  _gsb_fpp_customization_customize_reusable_form($form, $form_state, $form_id);
+
+  // Alter the add_content_modal forms...
+  _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
+
+}
+
+/**
+ *
+ * Customize the 'reusable' portion of the fpp form
+ *
+ * 1. Change the 'Category' select option to be the workbench sections the user
+ *    has access to.
+ * 2. Change the 'Category' select title to be 'Sections'.
+ * 3. If there are no sections then hide all of the reusable related fields.
+ * 4. Change the 'view mode' for the fpp.
+ * 5. Make some other small adjustments to the fpp form.
+ * 6. Set a validation function.
+ *
+ */
+function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $form_id) {
+
   global $user;
 
   // only show the pane categories the user has wb access to
@@ -73,36 +96,40 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
     }
   }
 
+  // add 'stock' as a category of reusable fpps
+  $categories['Stock'] = 'Stock';
+
   // adjust the visibility of reusable checkbox
 
   if (!empty($categories)) {
+
+    $form['reusable']['category']['#default_value'] = '';
+
     if (isset($form_state['entity'])) {
       $form['reusable']['category']['#default_value'] = $form_state['entity']->category;
-    } else {
-      $form['reusable']['category']['#default_value'] = '';
     }
 
     $form['reusable']['category']['#type'] = 'select';
     $form['reusable']['category']['#options'] = $categories;
 
     $form['reusable']['category']['#title'] = t('Sections');
+    $form['reusable']['category']['#description'] = t('The section this content will appear in the "Add content" modal.');
   }
   else {
     $form['reusable']['#access'] = FALSE;
   }
 
-  // adjust the view_mode
+  // adjust the view_mode for the fpp
 
   list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
 
   $form['view_mode']['#type'] = 'value';
+  $form['view_mode']['#value'] = 'full';
 
-  if ($form['#bundle'] == 'existing_node' && $panels_module == 'panels_mini' &&
+  if ($form['#bundle'] == 'existing_node' && 
+      $panels_module == 'panels_mini' &&
       in_array($type, array('business_insights', 'faculty_research', 'our_programs', 'the_stanford_gsb_experience'))) {
     $form['view_mode']['#value'] = 'megamenu';
-  }
-  else {
-    $form['view_mode']['#value'] = 'full';
   }
 
   // hide the title field
@@ -116,10 +143,8 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   $form['revision']['#access'] = FALSE;
   $form['revision']['revision']['#value'] = 0;
 
+  // set a validation function
   $form['#validate'][] = 'gsb_fpp_customization_fpp_edit_form_validate';
-
-  // Alter the add_content_modal forms...
-  _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
 }
 
@@ -171,6 +196,13 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
 }
 
+/**
+ *
+ * Validate the fpp form
+ *
+ * If the reusable option is checked, then make the 'Element Title' field required.
+ *
+ */
 function gsb_fpp_customization_fpp_edit_form_validate(&$form, &$form_state) {
   if (isset($form_state['values']['reusable']) && $form_state['values']['reusable'] == 1) {
     $admin_title = $form_state['values']['admin_title'];

@@ -96,8 +96,11 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
     }
   }
 
-  // add 'stock' as a category of reusable fpps
-  $categories['Stock'] = 'Stock';
+  // add 'Stock Content' as a category of reusable fpps
+  $categories['Stock Content'] = 'Stock Content';
+
+  // sort the categories
+  asort($categories);
 
   // adjust the visibility of reusable checkbox
 
@@ -367,6 +370,18 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   $category_keys = array_keys($vars['categories']);
 
+  // remove 'root' from the list of category keys
+  foreach($category_keys as $key => $value) {
+    if ($value == 'root') {
+      unset($category_keys[$key]);
+      break;
+    }
+  }
+
+  // after yanking items out of the $category_keys be need to
+  // rekey the $category_keys to be 0, 1, 2...
+  $category_keys = array_values($category_keys);
+
   // reorder the display of the categories_array to follow this order:
   // 'blocks', 'content-panes', <any sections>, and 'other'
 
@@ -379,16 +394,15 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   $diff_keys = array_diff_key($vars['categories'], $order_items);
 
-  // remove 'other' and 'root'
-  // we don't 'root'... so bye bye
-  // and we will be adding 'other' back at the end of the order items
+  // remove 'root' and 'other'
 
-  if (isset($diff_keys['root'])) {
-    unset($diff_keys['root']);
-  }
+  unset($diff_keys['root']);
+  unset($diff_keys['other']);
 
-  if (isset($diff_keys['other'])) {
-    unset($diff_keys['other']);
+  // only display the 'other' category if the user has the admin role
+
+  if (in_array('administrator', array_values($user->roles))) {
+    $order_items['other'] = array_search('other', $category_keys);
   }
 
   // and now what remains in diff should be the section categories
@@ -397,19 +411,17 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
     $order_items[$key] = array_search($key, $category_keys);
   }
 
-  // only display the 'other' category if the user has the admin role
-  if (in_array('administrator', array_values($user->roles))) {
-    $order_items['other'] = array_search('other', $category_keys);
-  }
-
   // now grab up the categories in the desired order
 
   $neworder_categories_array = array();
+  $neworder_categories = array();
   foreach($order_items as $key => $value) {
     $neworder_categories_array[] = $vars['categories_array'][$value];
+    $neworder_categories[$key] = $vars['categories'][$key];
   }
 
   $vars['categories_array'] = $neworder_categories_array;
+  $vars['categories'] = $neworder_categories;
 
 }
 

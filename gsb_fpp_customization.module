@@ -96,7 +96,7 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
     }
   }
   
-  // have each module add their own categories
+  // allow each module add their own categories
   drupal_alter('gsb_fpp_customization_add_category', $form, $categories);
 
   // sort the categories
@@ -349,12 +349,8 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
     }
   }
 
-  // add 'stock content' to the list of removed categories...
-  // if the user doesn't have permission add or create 'stock content'
-
-  if (!user_access('add stock content') && !user_access('create stock content')) {
-    $remove_items[] = 'stock-content';
-  }
+  // allow each module remove categories
+  drupal_alter('gsb_fpp_customization_remove_category', $remove_items);
 
   // ... also add in some other categories we just want to remove
 

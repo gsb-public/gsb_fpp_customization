@@ -35,73 +35,6 @@ function gsb_fpp_customization_library() {
 }
 
 /**
- * Implements hook_permission().
- */
-function gsb_fpp_customization_permission() {
-  return array(
-    'edit stock content' => array(
-      'title' => t('Edit Stock Content'),
-    ),
-    'create stock content' => array(
-      'title' => t('Create Stock Content'),
-    ),
-    'delete stock content' => array(
-      'title' => t('Delete Stock Content'),
-    ),
-    'add stock content' => array(
-      'title' => t('Add Stock Content'),
-    ),
-  );
-}
-
-/**
- * Implements hook_panels_ipe_pane_links_alter().
- */
-function gsb_fpp_customization_panels_ipe_pane_links_alter(&$links, $context) {
-
-  // check if the user has access to delete...
-  // at the moment the only content that we restrict is 'Stock Content'
-
-  // if the user has access to delete 'Stock Content' then...
-  // nothing more to do.
-
-  if (user_access('delete stock content')) {
-    //  We are good to go.
-    return;
-  }
-
-  // first check if we are considering a delete link
-  if (isset($links['delete'])) {
-
-    $id = $links['delete']['attributes']['id'];
-
-    // $id should look something like this... 'pane-delete-panel-pane-4'
-    list($part1, $part2, $part3, $part4, $pane_id) = explode("-", $id);
-
-    $type = $context['display']->content[$pane_id]->type;
-    $subtype = $context['display']->content[$pane_id]->subtype;
-
-    if ($type == 'fieldable_panels_pane') {
-
-      // get the uuid of the item
-      // the subtype should look something like this... 'uuid:bf7f85ab-ebdf-4f77-9782-25bf0eda19ad'
-      list($part1, $uuid) = explode(":", $subtype);
-
-      // get the fpp entity
-      $entity = _gsb_fpp_customization_get_fpp_entity_by_uuid($uuid);
-
-      if ($entity != null && $links['delete']['attributes']['id'] == 'pane-delete-panel-pane-' . $pane_id) {
-        if ($entity->category == 'Stock Content') {
-          unset($links['delete']);
-        }
-      }
-
-    }
-
-  }
-}
-
-/**
  * Implements hook_form_FORM_ID_alter()
  */
 function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
@@ -584,41 +517,12 @@ function _gsb_fpp_customization_load_preview_icons(&$vars) {
 
 }
 
-function _gsb_fpp_customization_get_fpp_entity_by_uuid($uuid) {
-
-  if (empty($uuid)) {
-    return null;
-  }
-
-  $query = new EntityFieldQuery();
-  $query->entityCondition('entity_type', 'fieldable_panels_pane');
-  $query->propertyCondition('uuid', $uuid);
-
-  try {
-    $result = $query->execute();
-  }
-  catch (EntityFieldQueryException $exception) {
-    //$message = $exception->getMessage();
-    return null;
-  }
-
-  if ($result == null || !isset($result['fieldable_panels_pane'])) {
-    return null;
-  }
-
-  $fpp = reset($result['fieldable_panels_pane']);
-  $fpp_entity = fieldable_panels_panes_load($fpp->fpid);
-
-  return $fpp_entity;
-
-}
-
 function _gsb_fpp_customization_recursive_keys($input) {
   $output = array_keys($input);
   foreach($input as $sub){
-      if(is_array($sub)){
-          $output = array_merge($output, _gsb_fpp_customization_recursive_keys($sub));
-      }
+    if(is_array($sub)){
+      $output = array_merge($output, _gsb_fpp_customization_recursive_keys($sub));
+    }
   }
   return $output;
 }

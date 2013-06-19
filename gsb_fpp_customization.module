@@ -363,6 +363,22 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
 }
 
+/**
+ * Preprocess the panels_ipe_toolbar to...
+ */
+function gsb_fpp_customization_preprocess_panels_ipe_toolbar(&$vars) {
+
+  // Add the gsb_fpp_customization_ctools.js file if there is a 'Change Layout' button
+  
+  if (isset($vars['buttons'])) {
+    $keys = _gsb_fpp_customization_recursive_keys($vars['buttons']);
+    if (in_array('panels-ipe-change-layout', $keys, true)) {
+      ctools_add_js('gsb_fpp_customization_ctools', 'gsb_fpp_customization');
+    }
+  }
+
+}
+
 function _gsb_fpp_customization_retitle_blocks_category(&$vars) {
 
   // change the title of the "Blocks" category to be more specific to the
@@ -595,4 +611,14 @@ function _gsb_fpp_customization_get_fpp_entity_by_uuid($uuid) {
 
   return $fpp_entity;
 
+}
+
+function _gsb_fpp_customization_recursive_keys($input) {
+  $output = array_keys($input);
+  foreach($input as $sub){
+      if(is_array($sub)){
+          $output = array_merge($output, _gsb_fpp_customization_recursive_keys($sub));
+      }
+  }
+  return $output;
 }

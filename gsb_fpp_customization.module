@@ -357,9 +357,9 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
   }
 
   // add 'stock content' to the list of removed categories...
-  // if the user doesn't have permission
+  // if the user doesn't have permission add or create 'stock content'
 
-  if (!user_access('add stock content')) {
+  if (!user_access('add stock content') && !user_access('create stock content')) {
     $remove_items[] = 'stock-content';
   }
 

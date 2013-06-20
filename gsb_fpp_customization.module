@@ -298,7 +298,6 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
         );
       }
 
-      $test = 'test';
       // sort category titles for the stock content page links
       ksort($vars['stock_content_page_links']);
 

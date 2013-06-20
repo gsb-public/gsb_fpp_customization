@@ -353,8 +353,8 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
   // reorder categories
   _gsb_fpp_customization_reorder_categories($vars);
 
-  // add quicklinks category
-  _gsb_fpp_customization_add_quicklinks($vars);
+  // add panels home category
+  _gsb_fpp_customization_add_panels_home_tab($vars);
 
   // load the preview icons
   _gsb_fpp_customization_load_preview_icons($vars);
@@ -362,7 +362,13 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 }
 
 /**
- * Preprocess the panels_ipe_toolbar to...
+ * Preprocess the panels_ipe_toolbar to... add the
+ * gsb_fpp_customization_ctools js file.
+ *
+ * This js file will be used to hide the layout category selector.
+ * By doing this we will limit authors to only use the 'GSB' page
+ * layouts.
+ * 
  */
 function gsb_fpp_customization_preprocess_panels_ipe_toolbar(&$vars) {
 
@@ -377,6 +383,11 @@ function gsb_fpp_customization_preprocess_panels_ipe_toolbar(&$vars) {
 
 }
 
+/**
+ * This function will retitle the 'blocks' vertical tab in the IPE Panels
+ * Add Content modal popup to be... 'Preformatted CTA'.
+ *
+ */
 function _gsb_fpp_customization_retitle_blocks_category(&$vars) {
 
   // change the title of the "Blocks" category to be more specific to the
@@ -398,6 +409,14 @@ function _gsb_fpp_customization_retitle_blocks_category(&$vars) {
 
 }
 
+/**
+ * This function will remove some of the categories displayed as
+ * vertical tabs in the IPE Panels Add Content modal popup.
+ *
+ * Any categories (which relate back to workbench sections) that the
+ * user doesn't have access to - will be removed.
+ * 
+ */
 function _gsb_fpp_customization_remove_categories(&$vars) {
 
   global $user;
@@ -456,6 +475,18 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
 
 }
 
+/**
+ * This function will reorders some of the categories displayed as
+ * vertical tabs in the IPE Panels Add Content modal popup.
+ *
+ * Categories will be displayed in the following order:
+ *
+ *   'blocks' ('Preformatted CTA')
+ *   'content-panes' ('Content Panes')
+ *   'other' ('Other')
+ *   and <any sections including a tab for 'Stock Content'>
+ *
+ */
 function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   global $user;
@@ -475,7 +506,7 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   $category_keys = array_values($category_keys);
 
   // reorder the display of the categories_array to follow this order:
-  // 'blocks', 'content-panes', <any sections>, and 'other'
+  // 'blocks', 'content-panes', 'other' and <any sections>
 
   $order_items = array(
     'blocks' => array_search('blocks', $category_keys),
@@ -517,7 +548,16 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
 }
 
-function _gsb_fpp_customization_add_quicklinks(&$vars) {
+/**
+ * This function will add a 'Panels Home' vertical tab
+ * in the IPE Panels Add Content modal popup.
+ *
+ * This tab shows a page of quick links to all of the
+ * content that can be added as a pane in our panelized
+ * content.
+ *
+ */
+function _gsb_fpp_customization_add_panels_home_tab(&$vars) {
 
   $active_class = '';
   if ($vars['category'] == null || $vars['category'] == 'root') {
@@ -531,6 +571,14 @@ function _gsb_fpp_customization_add_quicklinks(&$vars) {
 
 }
 
+/**
+ * This function will add preview icons for panes selectable
+ * in the IPE Panels Add Content modal popup.
+ *
+ * Each content type can use the gsb_fpp_customizations_icons_alter
+ * to set their own preview icons.
+ * 
+ */
 function _gsb_fpp_customization_load_preview_icons(&$vars) {
 
   // load the preview icons

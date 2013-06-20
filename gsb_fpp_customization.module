@@ -2,6 +2,9 @@
 
 /**
  * Implements hook_library()
+ *
+ * This adds the superfish flyout menu js for the 'Add Content' IPE modal popup.
+ *
  */
 function gsb_fpp_customization_library() {
 
@@ -36,6 +39,9 @@ function gsb_fpp_customization_library() {
 
 /**
  * Implements hook_form_FORM_ID_alter()
+ *
+ * This adds the 'back' and 'cancel' links to the edit form for block panes.
+ *
  */
 function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
@@ -46,6 +52,9 @@ function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$
 
 /**
  * Implements hook_form_FORM_ID_alter()
+ *
+ * This adds the 'back' and 'cancel' links to the edit form for view panes.
+ *
  */
 function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
@@ -54,6 +63,13 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
 
 }
 
+/**
+ * Implements hook_form_FORM_ID_alter()
+ *
+ * This adds the 'back' and 'cancel' links to the edit form for fpp panes. It also customizies fields related to
+ * reusable properties.
+ *
+ */
 function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
   // Customize the 'reusable' portion of the fpp form
@@ -81,7 +97,7 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
 
   global $user;
 
-  // only show the pane categories the user has wb access to
+  // only show the pane categories (sections) the user has workbench access to
 
   workbench_access_user_load_data($user);
   $active = workbench_access_get_active_tree();
@@ -96,7 +112,7 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
     }
   }
   
-  // allow each module add their own categories
+  // allow each module add their own categories (sections)
   drupal_alter('gsb_fpp_customization_add_category', $form, $categories);
 
   // sort the categories
@@ -163,7 +179,7 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
   // todo: Would be nice to clean up later, if possible.
   // The following commented code is now running in gsb_panopoly_magic_customization...
-  // to get around a function call order issue between this module and
+  // to get around a function calling order issue between this module and
   // panopoly magic.
 
   /*
@@ -201,9 +217,11 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
 /**
  *
- * Validate the fpp form
+ * Validate the fpp edit form
  *
  * If the reusable option is checked, then make the 'Element Title' field required.
+ * This will ensure that all reusable fpps will be listed by their title in the drupal
+ * admin fpp pages.
  *
  */
 function gsb_fpp_customization_fpp_edit_form_validate(&$form, &$form_state) {
@@ -219,7 +237,12 @@ function gsb_fpp_customization_fpp_edit_form_validate(&$form, &$form_state) {
  * Process the panels add content modal to...
  *
  * Replace the default header (boring) with a list all the content links,
- * on the first page of the panels_add_content_modal.
+ * on the first page of the panels Add Content modal popup. This page will be
+ * displayed under a tab called 'Panels Home'.
+ *
+ * We are also adding another new vertical tab titled 'Stock Content' that will
+ * contain any shared fpps. Shared FPPs have a category of 'stock-content', and
+ * are created by selecting 'Stock Content' for the reusable 'Sections' property.
  *
  */
 function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
@@ -556,6 +579,9 @@ function _gsb_fpp_customization_load_preview_icons(&$vars) {
 
 }
 
+/**
+ * Recursively get list of all the keys in an array
+ */
 function _gsb_fpp_customization_recursive_keys($input) {
   $output = array_keys($input);
   foreach($input as $sub){
@@ -597,7 +623,6 @@ function _gsb_fpp_customization_get_fpp_entity_by_uuid($uuid) {
   return $fpp_entity;
 
 }
-
 
 /**
  * Convert bundle name to title

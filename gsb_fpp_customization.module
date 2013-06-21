@@ -120,7 +120,7 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
 
   // adjust the visibility of reusable checkbox
 
-  if (!empty($categories)) {
+  if (!empty($categories) && isset($form['reusable'])) {
 
     $form['reusable']['category']['#default_value'] = '';
 

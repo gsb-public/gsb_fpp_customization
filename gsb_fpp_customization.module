@@ -350,6 +350,9 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
+  // tweak the preview button href if needed
+  _gsb_fpp_customization_load_tweak_preview_button($vars);
+
   // change the title of the "Blocks" category
   _gsb_fpp_customization_retitle_blocks_category($vars);
 
@@ -628,6 +631,50 @@ function _gsb_fpp_customization_load_preview_icons(&$vars) {
           ));
           $content['preview'] = $description . '</br>' . $content['preview'];
         }
+      }
+    }
+  }
+
+}
+
+/**
+ * This function will tweak the preview button href as described below.
+ *
+ * It ain't pretty ... but it seems to work. Wee.
+ *
+ */
+function _gsb_fpp_customization_load_tweak_preview_button(&$vars) {
+
+  $category = $vars['category'];
+
+  // In panopoly_magic_preprocess_panels_add_content_modal() it uses the current_path() to create
+  // the preview button href.
+
+  // This can be incorrectly set the ajax method as 'add-pane' instead of 'select-content' when
+  // the user uses the cancel or back links.
+
+  // So... (big breath)
+
+  // We need to change preview from this...
+  // panels/ajax/ipe/add-pane/panelizer%3Anode%3A300000%3Apage_manager/fullheader/fieldable_panels_pane/uuid%3.../form?preview_panes=uuid...
+
+  // to this...
+  // panels/ajax/ipe/select-content/panelizer%3Anode%3A300000%3Apage_manager/fullheader/?preview_panes=uuid...
+
+  foreach($vars['categories'][$category]['content'] as &$content) {
+    $preview = $content['preview'];
+    $pos = strpos($preview, 'add-pane');
+    if ($pos !== false) {
+      $preview = str_replace('add-pane', 'select-content', $preview);
+    }
+    $pos = strpos($preview,'fieldable_panels_pane');
+    if ($pos !== false) {
+      $start_pos = $pos;
+      $pos = strpos($preview,'?');
+      if ($pos !== false) {
+        $new_preview_part1 = substr($preview, 0, $start_pos);
+        $new_preview_part2 = substr($preview, $pos);
+        $content['preview'] = $new_preview_part1 . $category . $new_preview_part2;
       }
     }
   }

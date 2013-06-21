@@ -173,6 +173,7 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
  *
  * 1. add back the cancel button that panopoly_magic had removed, but the js will hide it.
  * 2. add 'back' and 'cancel' links to the form
+ * 3. remove/hide the override title fields if the form is for 'Blocks' (Preformatted CTAs)
  *
  */
 function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
@@ -191,6 +192,8 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
+  // add cancel link
+
   $form['buttons']['cancel_link'] = array(
     '#type' => 'link',
     '#title' => t('Cancel'),
@@ -202,6 +205,8 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
     ),
   );
 
+  // add back link
+
   $form['back_link'] = array(
     '#type' => 'link',
     '#title' => t('Back to Add Content'),
@@ -212,6 +217,14 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
       'fragment' => 'back-link',
     ),
   );
+
+  // remove/hide the override title fields if the form is for 'Blocks' (Preformatted CTAs)
+
+  if (isset($form_state['subtype']['category']) && $form_state['subtype']['category'] == 'Blocks') {
+    $form['override_title']['#access'] = FALSE;
+    $form['override_title_markup']['#access'] = FALSE;
+    $form['override_title_text']['#access'] = FALSE;
+  }
 
 }
 

@@ -145,7 +145,8 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
   $form['view_mode']['#type'] = 'value';
   $form['view_mode']['#value'] = 'full';
 
-  if ($form['#bundle'] == 'existing_node' && 
+  if (isset($form['#bundle']) &&
+      $form['#bundle'] == 'existing_node' &&
       $panels_module == 'panels_mini' &&
       in_array($type, array('business_insights', 'faculty_research', 'our_programs', 'the_stanford_gsb_experience'))) {
     $form['view_mode']['#value'] = 'megamenu';

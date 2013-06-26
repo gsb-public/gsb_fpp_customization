@@ -274,7 +274,10 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
       if ($category == 'root') {
         continue;
       }
-      $category_title = $value['title'];
+      $category_title = '';
+      if (isset($value['title'])) {
+        $category_title = $value['title'];
+      }
       if ($category == 'other') {
         // only display the 'other' category if the user has the admin role
         if (!in_array('administrator', array_values($user->roles))) {
@@ -282,19 +285,24 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
         }
       }
 
-      // sort the content by their keys (titles) within each category
-      ksort($vars['categories'][$category]['content']);
+      if (isset($vars['categories'][$category]['content'])) {  
 
-      foreach($vars['categories'][$category]['content'] as $content) {
-        $vars['first_page_links'][$category_title][] = array(
-          'link' => theme('panels_add_content_link', array(
-                      'renderer' => $vars['renderer'],
-                      'region' => $vars['region'],
-                      'first_page' => $vars['first_page'],
-                      'content_type' => $content
-                    )),
-        );
+        // sort the content by their keys (titles) within each category
+        ksort($vars['categories'][$category]['content']);
+
+        foreach($vars['categories'][$category]['content'] as $content) {
+          $vars['first_page_links'][$category_title][] = array(
+            'link' => theme('panels_add_content_link', array(
+                        'renderer' => $vars['renderer'],
+                        'region' => $vars['region'],
+                        'first_page' => $vars['first_page'],
+                        'content_type' => $content
+                      )),
+          );
+        }
+
       }
+
     }
 
   }
@@ -673,6 +681,10 @@ function _gsb_fpp_customization_load_tweak_preview_button(&$vars) {
 
   // to this...
   // panels/ajax/ipe/select-content/panelizer%3Anode%3A300000%3Apage_manager/fullheader/?preview_panes=uuid...
+
+  if (!isset($vars['categories'][$category]['content'])) {
+    return;
+  }
 
   foreach($vars['categories'][$category]['content'] as &$content) {
     $preview = $content['preview'];

@@ -13,12 +13,12 @@ function gsb_fpp_customization_library() {
     'website' => 'https://github.com/joeldbirch/superfish',
     'version' => '1.7.3',
     'js' => array(
-      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/js/hoverIntent.js' => array(),
-      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/js/superfish.js' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/dist/js/hoverIntent.js' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/dist/js/superfish.js' => array(),
     ),
     'css' => array(
-      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/css/superfish.css' => array(),
-      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/css/superfish-vertical.css' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/dist/css/superfish.css' => array(),
+      drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/dist/css/superfish-vertical.css' => array(),
     ),
   );
 

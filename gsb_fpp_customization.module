@@ -453,6 +453,10 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
 
   global $user;
 
+  if ($user->uid == 1) {
+    return;
+  }
+
   // get the user's access
 
   workbench_access_user_load_data($user);

@@ -153,7 +153,10 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
   }
 
   // hide the title field
-  $form['title']['#access'] = FALSE;
+  // except when we are editing the accordion fpp
+  if ($form['#bundle'] != 'accordion') {
+    $form['title']['#access'] = FALSE;
+  }
 
   // hide the 'make title a link' field
   $form['link']['#access'] = FALSE;

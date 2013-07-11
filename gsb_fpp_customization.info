@@ -4,3 +4,10 @@ package = GSB
 version = 7.x-1.0
 project = gsb_fpp_customization
 
+
+
+; Information added by drush on 2013-07-11
+version = "master-dev"
+project = "gsb_fpp_customization"
+datestamp = "1373556865"
+

@@ -72,6 +72,9 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
  */
 function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
+  // Customize the title of the fpp modal
+  _gsb_fpp_customization_customize_modal_title($form, $form_state, $form_id);  
+
   // Customize the 'reusable' portion of the fpp form
   _gsb_fpp_customization_customize_reusable_form($form, $form_state, $form_id);
 
@@ -79,6 +82,22 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
 }
+
+/**
+ *
+ * Customize the title of the fpp modal
+ *
+ */
+function _gsb_fpp_customization_customize_modal_title(&$form, &$form_state, $form_id) {
+
+  if (isset($form['#entity'])) {
+    $bundle = $form['#entity']->bundle;
+    $fpp_id = $form['#entity']->fpid;
+    $title = 'Edit ' . $form['#entity']->admin_title . ' (' . $bundle . ':fpp_id:' . $fpp_id . ')';
+    $form_state['title'] = $title; 
+  }
+
+}  
 
 /**
  *

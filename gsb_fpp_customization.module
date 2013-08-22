@@ -45,6 +45,9 @@ function gsb_fpp_customization_library() {
  */
 function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
+  // Customize the title of the modal
+  _gsb_fpp_customization_customize_modal_title('block', $form, $form_state, $form_id);  
+
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
@@ -93,7 +96,14 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
  */
 function _gsb_fpp_customization_customize_modal_title($type, &$form, &$form_state, $form_id) {
 
-  if ($type == 'view') {
+  if ($type == 'block') {
+
+    $block_name = $form_state['subtype_name'];
+    $title = $form_state['subtype']['title'];
+
+    $form_state['title'] = $title . ' (block:' . $block_name . ')';     
+
+  } else if ($type == 'view') {
 
     if (isset($form_state['view'])) {
       $title = $form_state['subtype']['title'];

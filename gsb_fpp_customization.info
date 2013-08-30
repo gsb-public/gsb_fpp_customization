@@ -11,3 +11,10 @@ version = "master-dev"
 project = "gsb_fpp_customization"
 datestamp = "1373556865"
 
+
+
+; Information added by drush on 2013-08-24
+version = "master-dev"
+project = "gsb_fpp_customization"
+datestamp = "1377338714"
+

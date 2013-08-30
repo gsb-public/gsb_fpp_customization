@@ -8,6 +8,8 @@
  */
 function gsb_fpp_customization_library() {
 
+  // Adding superfish library
+
   $libraries['superfish'] = array(
     'title' => 'Superfish',
     'website' => 'https://github.com/joeldbirch/superfish',
@@ -21,6 +23,8 @@ function gsb_fpp_customization_library() {
       drupal_get_path('profile', 'gsb_public') . '/libraries/superfish/dist/css/superfish-vertical.css' => array(),
     ),
   );
+
+  // Adding gsb_fpp_customization js
 
   $libraries['gsb_fpp_customization'] = array(
     'title' => 'GSB Fpp Customization',

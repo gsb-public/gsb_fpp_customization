@@ -11,7 +11,7 @@
       // trigger the 'back' link via a cancel button click
       $('#back-link, #cancel-link').click(function(event) {
         event.preventDefault();
-        $('.gsb-panopoly-magic-customization-cancel-button').click();
+        $('#edit-cancel').click();
       });
         
     }

@@ -42,6 +42,20 @@ function gsb_fpp_customization_library() {
 }
 
 /**
+ * Implementation of hook_ctools_content_subtype_alter()
+ */
+function gsb_fpp_customization_ctools_content_subtype_alter(&$subtype, &$plugin) {
+
+  $category_label  = (is_string($subtype['category'])) ? $subtype['category'] : $subtype['category'][0];
+
+  // Switch the labeling of "Miscellaneous" to "Blocks"
+  if ($category_label == 'Miscellaneous') {
+    $subtype['category'] = 'Blocks';
+  }
+
+}
+
+/**
  * Implements hook_form_FORM_ID_alter()
  *
  * This adds the 'back' and 'cancel' links to the edit form for block panes.
@@ -831,3 +845,5 @@ function _gsb_fpp_customization_get_title_by_bundle_name($bundle_name) {
 
   return $bundle_name_lookup[$bundle_name]; 
 }
+
+

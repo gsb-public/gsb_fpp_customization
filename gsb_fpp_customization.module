@@ -832,6 +832,7 @@ function _gsb_fpp_customization_get_title_by_bundle_name($bundle_name) {
     'diptych' => 'Diptych',
     'existing_node' => 'Existing Node',
     'house_ads' => 'House Ads',
+    'featured_faculty' => 'Featured Faculty',
     'image_cta' => 'Image CTA',
     'links' => 'Links',
     'people' => 'People',

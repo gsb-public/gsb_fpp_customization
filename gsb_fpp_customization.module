@@ -133,7 +133,7 @@ function _gsb_fpp_customization_customize_modal_title($type, &$form, &$form_stat
 
     if (isset($form['#entity'])) {
       $bundle = $form['#entity']->bundle;
-      $fpp_id = $form['#entity']->fpid;
+      $fpp_id = !empty($form['#entity']->fpid) ? $form['#entity']->fpid : '';
       $title = 'Edit ' . $form['#entity']->admin_title . ' (' . $bundle . ':fpp_id:' . $fpp_id . ')';
       $form_state['title'] = $title; 
     }

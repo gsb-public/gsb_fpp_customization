@@ -3,18 +3,9 @@ core = 7.x
 package = GSB
 version = 7.x-1.0
 project = gsb_fpp_customization
-
-
-
-; Information added by drush on 2013-07-11
-version = "master-dev"
-project = "gsb_fpp_customization"
-datestamp = "1373556865"
-
-
-
-; Information added by drush on 2013-08-24
-version = "master-dev"
-project = "gsb_fpp_customization"
-datestamp = "1377338714"
+dependencies[] = views
+features[ctools][] = views:views_default:3.0
+features[features_api][] = api:2
+features[views_view][] = gsb_fieldable_pane_entities
+features_exclude[dependencies][ctools] = ctools
 

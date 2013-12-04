@@ -1,5 +1,26 @@
 <?php
 
+include_once 'gsb_fpp_customization.features.inc';
+
+/**
+ * Implemetation of hook_menu_alter()
+ */
+function gsb_fpp_customization_menu_alter(&$items) {
+
+  if (isset($items['admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type'])) {
+    $items['admin/structure/fieldable-panels-panes/manage/%fieldable_panels_panes_type']['page callback'] 
+      = 'gsb_fpp_customization_entities_list_page';
+  }
+
+}
+
+/**
+ * List all entities for the given type.
+ */
+function gsb_fpp_customization_entities_list_page($type) {
+  return views_embed_view('gsb_fieldable_pane_entities', 'default', $type);
+}
+
 /**
  * Implements hook_library()
  *

@@ -221,6 +221,13 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
     $form['reusable']['#access'] = FALSE;
   }
 
+  // Hire reusable checkbox in case it was once marked as reusable.
+  if ($form_state['entity']->reusable) {
+    // Hide reusable checkbox instead of #access = FALSE to preserve fieldset display.
+    $form['reusable']['reusable']['#attributes']['style'] = 'display:none;';
+    $form['reusable']['reusable']['#suffix'] = t('This FPP is reusable and can\'t be changed');
+  }
+
   // adjust the view_mode for the fpp
 
   list($panels_module, $type) = explode(':', $form_state['display']->cache_key);

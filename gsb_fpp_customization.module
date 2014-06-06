@@ -860,6 +860,7 @@ function _gsb_fpp_customization_get_title_by_bundle_name($bundle_name) {
     'diptych' => 'Diptych',
     'existing_node' => 'Existing Node',
     'featured_person' => 'Featured Person',
+    'homepage_cta' => 'Homepage CTA',       
     'house_ads' => 'House Ads',
     'image_cta' => 'Image CTA',
     'links' => 'Links',
@@ -874,5 +875,4 @@ function _gsb_fpp_customization_get_title_by_bundle_name($bundle_name) {
 
   return $bundle_name_lookup[$bundle_name]; 
 }
-
 

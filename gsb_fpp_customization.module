@@ -875,4 +875,60 @@ function _gsb_fpp_customization_get_title_by_bundle_name($bundle_name) {
   return $bundle_name_lookup[$bundle_name]; 
 }
 
+/**
+ * Implements hook_panels_ipe_pane_links_alter().
+ *
+ * This hook will remove the 'gear' and/or 'trash can' buttons
+ * at the top of each pane in the panels ipe, if the user
+ * doesn't have access to take these actions for the specific
+ * content pane.
+ * 
+ */
+function gsb_fpp_customization_panels_ipe_pane_links_alter(&$links, $context) {
+  
+  // if the user has access to edit and delete 'image_cta' then...
+  // there is nothing more to do.
 
+  $can_edit = user_access('edit fieldable image_cta');
+  $can_delete = user_access('delete fieldable image_cta');
+
+  if ($can_edit && $can_delete) {
+    return;
+  }  
+
+  $pane_id = $context['pane']->pid;
+  
+  $type = $context['display']->content[$pane_id]->type;
+  $subtype = $context['display']->content[$pane_id]->subtype;
+
+  // if the pane isn't a fpp then...
+  // there is nothing more to do.
+
+  if ($type != 'fieldable_panels_pane') {
+    return;
+  }
+
+  // get the uuid of the item
+  // the subtype should look something like this... 'uuid:bf7f85ab-ebdf-4f77-9782-25bf0eda19ad'
+  list($part1, $uuid) = explode(":", $subtype);
+  
+  // get the fpp entity
+  $entity = _gsb_fpp_stock_content_get_fpp_entity_by_uuid($uuid);
+
+  // first check if we are considering a delete link
+  if (!$can_delete && isset($links['delete'])) {
+    if ($entity != null && $links['delete']['attributes']['id'] == 'pane-delete-panel-pane-' . $pane_id) {
+      if ($entity->bundle == 'image_cta') {
+        unset($links['delete']);
+      }
+    }
+  }  
+
+  // next check if we are considering a edit link
+  if (!$can_edit && isset($links['edit'])) {
+    if ($entity->bundle == 'image_cta') {
+      unset($links['edit']);
+    }
+  }    
+
+} 

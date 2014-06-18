@@ -11,8 +11,12 @@
       // trigger the 'back' link via a cancel button click
       $('#back-link, #cancel-link').click(function(event) {
         event.preventDefault();
-        // Dismiss the overlay.
-        Drupal.CTools.Modal.dismiss();
+        if ($('#edit-cancel').length) {
+          $('#edit-cancel').click();
+        }
+        else {
+          Drupal.CTools.Modal.dismiss();
+        }
       });
         
     }

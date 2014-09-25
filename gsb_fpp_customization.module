@@ -370,8 +370,15 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
         $category_title = $value['title'];
       }
       if ($category == 'other') {
-        // only display the 'other' category if the user has the admin role
-        if (!in_array('administrator', array_values($user->roles))) {
+        // only display the 'other' category if the user has the admin or marketing_admin role
+        $other_access = FALSE;
+        if (in_array('administrator', array_values($user->roles))) {
+          $other_access = TRUE;
+        }
+        if (in_array('marketing_admin', array_values($user->roles))) {
+          $other_access = TRUE;
+        }
+        if (!other_access) {
           continue;
         }
       }
@@ -651,6 +658,9 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   // only display the 'other' category if the user has the admin role
 
   if (in_array('administrator', array_values($user->roles))) {
+    $order_items['other'] = array_search('other', $category_keys);
+  }
+  else if (in_array('marketing_admin', array_values($user->roles))) {
     $order_items['other'] = array_search('other', $category_keys);
   }
 

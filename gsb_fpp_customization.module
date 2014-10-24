@@ -269,18 +269,6 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
  */
 function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
 
-  // todo: Would be nice to clean up later, if possible.
-  // The following commented code is now running in gsb_panopoly_magic_customization...
-  // to get around a function calling order issue between this module and
-  // panopoly magic.
-
-  /*
-  if (isset($form['buttons']['cancel']['#access'])) {
-    unset($form['buttons']['cancel']['#access']);
-    $form['buttons']['#weight'] = 1000;
-  }
-  */
-
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
   // add cancel link

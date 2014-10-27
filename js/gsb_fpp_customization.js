@@ -18,7 +18,21 @@
           Drupal.CTools.Modal.dismiss();
         }
       });
-        
+
+      // Add a body class when the modal opens
+      $('body').addClass('panels-ipe-modal-open');
+
+      // Hide the body class when the close button is clicked.
+      $('.modal-header a.close').click(function() {
+        $('body').removeClass('panels-ipe-modal-open');
+      });
+
+      // Hide the body class when the escape key is pressed.
+      $(document).keyup(function (e) {
+        if (e.keyCode == 27) {
+          $('body').removeClass('panels-ipe-modal-open');
+        }
+      });
     }
   }
 })(jQuery);

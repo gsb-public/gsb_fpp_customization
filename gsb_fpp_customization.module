@@ -271,21 +271,7 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
 
-  // add cancel link
-
-  $form['buttons']['cancel_link'] = array(
-    '#type' => 'link',
-    '#title' => t('Cancel'),
-    '#href' => '',
-    '#weight' => 100,
-    '#id' => 'cancel-link',
-    '#options' => array(
-      'fragment' => 'cancel',
-    ),
-  );
-
   // add back link
-
   $form['back_link'] = array(
     '#type' => 'link',
     '#title' => t('Back to Add Content'),
@@ -304,7 +290,6 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
     $form['override_title_markup']['#access'] = FALSE;
     $form['override_title_text']['#access'] = FALSE;
   }
-
 }
 
 /**

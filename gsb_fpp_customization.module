@@ -262,9 +262,8 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
  *
  * Alter the add_content_modal forms...
  *
- * 1. add back the cancel button that panopoly_magic had removed, but the js will hide it.
- * 2. add 'back' and 'cancel' links to the form
- * 3. remove/hide the override title fields if the form is for 'Blocks' (Preformatted CTAs)
+ * 1. add 'back' and 'cancel' links to the form
+ * 2. remove/hide the override title fields if the form is for 'Blocks' (Preformatted CTAs)
  *
  */
 function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $form_id) {
@@ -435,15 +434,11 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
  * 1. Change the title for the 'Blocks' category.
  * 2. Remove any categories that the user doesn't have access to or...
  * 3. Reorder the display of the categories
- * 4. Load the preview icons
  *
  */
 function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
   drupal_add_library('gsb_fpp_customization', 'gsb_fpp_customization');
-
-  // tweak the preview button href if needed
-  _gsb_fpp_customization_load_tweak_preview_button($vars);
 
   // change the title of the "Blocks" category
   _gsb_fpp_customization_retitle_blocks_category($vars);
@@ -457,9 +452,6 @@ function gsb_fpp_customization_preprocess_panels_add_content_modal(&$vars) {
 
   // add panels home category
   _gsb_fpp_customization_add_panels_home_tab($vars);
-
-  // load the preview icons
-  _gsb_fpp_customization_load_preview_icons($vars);
 
 }
 
@@ -677,110 +669,6 @@ function _gsb_fpp_customization_add_panels_home_tab(&$vars) {
   $text_button = ctools_ajax_text_button('Panels Home', $url, '', 'panels-modal-add-category' . $active_class);
 
   array_unshift($vars['categories_array'], $text_button);
-
-}
-
-/**
- * This function will add preview icons for panes selectable
- * in the IPE Panels Add Content modal popup.
- *
- * Each content type can use the gsb_fpp_customizations_icons_alter
- * to set their own preview icons.
- * 
- */
-function _gsb_fpp_customization_load_preview_icons(&$vars) {
-
-  // load the preview icons
-
-  $icons = array();
-
-  if (!empty($vars['categories'][$vars['category']]['content'])) {
-    foreach ($vars['categories'][$vars['category']]['content'] as $key => $value) {
-      $type_name = $value['type_name'];
-      $subtype_name = $value['subtype_name'];
-      $icons[$type_name . ':' . $subtype_name] = array('icon' => '');
-    }
-  }
-
-  // have each module add their preview icon
-  drupal_alter('gsb_fpp_customizations_icons', $icons);
-
-  // render the icon as the preview for the content
-  if (!empty($vars['categories'][$vars['category']]['content'])) {
-    foreach ($vars['categories'][$vars['category']]['content'] as &$content) {
-      $type_name = $content['type_name'];
-      $subtype_name = $content['subtype_name'];
-      $icon_key = $type_name . ':' . $subtype_name;
-      if (isset($icons[$icon_key]) && !empty($icons[$icon_key]['icon'])) {
-        $image_vars = array(
-          'item' => array(
-            'uri' => $icons[$icon_key]['icon'],
-          ),
-        );
-        $content['preview'] = theme('image_formatter', $image_vars);
-      } else {
-        // if there isn't an icon, then see if we can display the description
-        if (isset($content['description']) && !empty($content['description'])) {
-          $description = theme_html_tag(array(
-            'element' => array(
-              '#tag' => 'span',
-              '#value' => $content['description'],
-              '#attributes' => array('class' => 'element-description')
-            )
-          ));
-          $content['preview'] = $description . '</br>' . $content['preview'];
-        }
-      }
-    }
-  }
-
-}
-
-/**
- * This function will tweak the preview button href as described below.
- *
- * It ain't pretty ... but it seems to work. Wee.
- *
- */
-function _gsb_fpp_customization_load_tweak_preview_button(&$vars) {
-
-  $category = $vars['category'];
-
-  // In panopoly_magic_preprocess_panels_add_content_modal() it uses the current_path() to create
-  // the preview button href.
-
-  // This can be incorrectly set the ajax method as 'add-pane' instead of 'select-content' when
-  // the user uses the cancel or back links.
-
-  // So... (big breath)
-
-  // We need to change preview from this...
-  // panels/ajax/ipe/add-pane/panelizer%3Anode%3A300000%3Apage_manager/fullheader/fieldable_panels_pane/uuid%3.../form?preview_panes=uuid...
-
-  // to this...
-  // panels/ajax/ipe/select-content/panelizer%3Anode%3A300000%3Apage_manager/fullheader/?preview_panes=uuid...
-
-  if (!isset($vars['categories'][$category]['content'])) {
-    return;
-  }
-
-  foreach($vars['categories'][$category]['content'] as &$content) {
-    $preview = $content['preview'];
-    $pos = strpos($preview, 'add-pane');
-    if ($pos !== false) {
-      $preview = str_replace('add-pane', 'select-content', $preview);
-    }
-    $pos = strpos($preview,'fieldable_panels_pane');
-    if ($pos !== false) {
-      $start_pos = $pos;
-      $pos = strpos($preview,'?');
-      if ($pos !== false) {
-        $new_preview_part1 = substr($preview, 0, $start_pos);
-        $new_preview_part2 = substr($preview, $pos);
-        $content['preview'] = $new_preview_part1 . $category . $new_preview_part2;
-      }
-    }
-  }
 
 }
 

@@ -350,7 +350,7 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
         if (in_array('marketing_admin', array_values($user->roles))) {
           $other_access = TRUE;
         }
-        if (!other_access) {
+        if (!$other_access) {
           continue;
         }
       }

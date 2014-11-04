@@ -83,7 +83,6 @@ function gsb_fpp_customization_ctools_content_subtype_alter(&$subtype, &$plugin)
  *
  */
 function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
-
   // Customize the title of the modal
   _gsb_fpp_customization_customize_modal_title('block', $form, $form_state, $form_id);  
 
@@ -100,8 +99,11 @@ function gsb_fpp_customization_form_ctools_block_content_type_edit_form_alter(&$
  */
 function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
 
+  // Customize the fields
+  _gsb_fpp_customization_customize_content_pane_fields($form, $form_state, $form_id);
+
   // Customize the title of the modal
-  _gsb_fpp_customization_customize_modal_title('view', $form, $form_state, $form_id);  
+  _gsb_fpp_customization_customize_modal_title('view', $form, $form_state, $form_id);
 
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
@@ -111,8 +113,8 @@ function gsb_fpp_customization_form_views_content_views_panes_content_type_edit_
 /**
  * Implements hook_form_FORM_ID_alter()
  *
- * This adds the 'back' and 'cancel' links to the edit form for fpp panes. It also customizies fields related to
- * reusable properties.
+ * This adds the 'back' and 'cancel' links to the edit form for fpp panes. It
+ * also customizes fields related to reusable properties.
  *
  */
 function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane_content_type_edit_form_alter(&$form, &$form_state, $form_id) {
@@ -126,6 +128,62 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
+}
+
+/**
+ * Customize the fields on content panes.
+ */
+function _gsb_fpp_customization_customize_content_pane_fields(&$form, &$form_state, $form_id) {
+
+  // Widget Title
+  if (!empty($form['override_title'])) {
+    // Adjust the title
+    $form['override_title_text']['#field_prefix'] = '<label for="override-title-textfield">' . t('Title') . '</label>';
+
+    // Set the default value of the checkbox to true and hide the checkbox.
+    $form['override_title']['#access'] = FALSE;
+    $form['override_title']['#default_value'] = TRUE;
+
+    // Hide the help text.
+    $form['override_title_markup']['#access'] = FALSE;
+  }
+
+  // Items Per Page
+  if (!empty($form['items_per_page'])) {
+    $form['items_per_page']['#title'] = t('Items to Show');
+  }
+
+  // More Link
+  if (!empty($form['more_link'])) {
+    $form['more_link']['#title'] = t('Provide a link to') . ' ' . $form_state['view']->display_handler->options['use_more_text'];
+    unset($form['more_link']['#description']);
+  }
+
+  // Fields Selector
+  if (!empty($form['fields_override'])) {
+    $form['fields_override']['#title'] = t('Fields to Display');
+    $form['fields_override']['#collapsible'] = FALSE;
+  }
+
+  // Exposed filters
+  if (!empty($form['exposed']) && count(element_children($form['exposed'])) > 0) {
+    $form['exposed']['#type'] = 'fieldset';
+    $form['exposed']['#title'] = t('Filters');
+    $form['exposed']['#attributes'] = array('class' => array('general-settings-fieldset'));
+  }
+
+  // Order the fields.
+  $field_order = array(
+    'override_title_text',
+    'items_per_page',
+    'more_link',
+    'fields_override',
+    'exposed',
+  );
+
+  foreach ($field_order as $index => $field) {
+    $form[$field]['#weight'] = $index - 100;
+  }
 }
 
 /**
@@ -283,7 +341,6 @@ function _gsb_fpp_customization_add_content_form_alter(&$form, &$form_state, $fo
   );
 
   // remove/hide the override title fields if the form is for 'Blocks' (Preformatted CTAs)
-
   if (isset($form_state['subtype']['category']) && $form_state['subtype']['category'] == 'Blocks') {
     $form['override_title']['#access'] = FALSE;
     $form['override_title_markup']['#access'] = FALSE;

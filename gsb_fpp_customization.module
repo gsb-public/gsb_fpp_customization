@@ -239,7 +239,6 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
   global $user;
 
   // only show the pane categories (sections) the user has workbench access to
-
   workbench_access_user_load_data($user);
   $active = workbench_access_get_active_tree();
   $account_access = array_keys($user->workbench_access);
@@ -260,7 +259,6 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
   asort($categories);
 
   // adjust the visibility of reusable checkbox
-
   if (!empty($categories) && isset($form['reusable'])) {
     if (isset($form_state['entity']) && !empty($form_state['entity']->category)) {
       $form['reusable']['category']['#default_value'] = $form_state['entity']->category;
@@ -269,22 +267,24 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
     $form['reusable']['category']['#type'] = 'select';
     $form['reusable']['category']['#options'] = $categories;
 
-    $form['reusable']['category']['#title'] = t('Sections');
+    $form['reusable']['category']['#title'] = t('Section');
     $form['reusable']['category']['#description'] = t('The section this content will appear in the "Add content" modal.');
   }
   else {
     $form['reusable']['#access'] = FALSE;
   }
 
-  // Hire reusable checkbox in case it was once marked as reusable.
+  // Hide reusable checkbox in case it was once marked as reusable.
   if ($form_state['entity']->reusable) {
-    // Hide reusable checkbox instead of #access = FALSE to preserve fieldset display.
-    $form['reusable']['reusable']['#attributes']['style'] = 'display:none;';
-    $form['reusable']['reusable']['#suffix'] = t('This FPP is reusable and can\'t be changed');
+    $form['reusable']['reusable']['#access'] = FALSE;
   }
 
-  // adjust the view_mode for the fpp
+  $form['reusable']['reusable']['#weight'] = -2;
+  $form['reusable']['reusable']['#suffix'] = t('Once an item is made reusable it can\'t be undone.');
 
+  $form['reusable']['warning']['#weight'] = -1;
+
+  // adjust the view_mode for the fpp
   list($panels_module, $type) = explode(':', $form_state['display']->cache_key);
 
   $form['view_mode']['#type'] = 'value';

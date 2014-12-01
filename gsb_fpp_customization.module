@@ -660,6 +660,11 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   // rekey the $category_keys to be 0, 1, 2...
   $category_keys = array_values($category_keys);
 
+  // unset($diff_keys['customizable-content-lists']);
+  // if (in_array(array('administrator', 'marketing_admin', 'section manager'), array_values($user->roles))) {
+    // $order_items['customizable-content-lists'] = array_search('customizable-content-lists', $category_keys);
+  // }
+
   // reorder the display of the categories_array to follow this order:
   // 'blocks', 'content-panes', 'other' and <any sections>
 
@@ -673,6 +678,8 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
     'administrator-blocks' => array_search('administrator-blocks', $category_keys),
     'administrators' => array_search('administrators', $category_keys),
     'blocks' => array_search('blocks', $category_keys),
+    'custom-blocks' => array_search('custom-blocks', $category_keys),
+    'marketing' => array_search('marketing', $category_keys),
    // 'content-panes' => array_search('content-panes', $category_keys),
   );
 

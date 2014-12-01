@@ -664,8 +664,16 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   // 'blocks', 'content-panes', 'other' and <any sections>
 
   $order_items = array(
+    'customizable-content-lists' => array_search('customizable-content-lists', $category_keys),
+    'non-customizable-content-lists' => array_search('non-customizable-content-lists', $category_keys),
+    'menus' => array_search('menus', $category_keys),
+    'stock-content' => array_search('stock-content', $category_keys),
+    'custom-content---features' => array_search('custom-content---features', $category_keys),
+    'views' => array_search('views', $category_keys),
+    'administrator-blocks' => array_search('administrator-blocks', $category_keys),
+    'administrators' => array_search('administrators', $category_keys),
     'blocks' => array_search('blocks', $category_keys),
-    'content-panes' => array_search('content-panes', $category_keys),
+   // 'content-panes' => array_search('content-panes', $category_keys),
   );
 
   // find any categories that are left
@@ -676,15 +684,16 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   unset($diff_keys['root']);
   unset($diff_keys['other']);
+  unset($diff_keys['content-panes']);
 
   // only display the 'other' category if the user has the admin role
-
-  if (in_array('administrator', array_values($user->roles))) {
-    $order_items['other'] = array_search('other', $category_keys);
-  }
-  else if (in_array('marketing_admin', array_values($user->roles))) {
-    $order_items['other'] = array_search('other', $category_keys);
-  }
+  // remove other and it is no longer in use
+  // if (in_array('administrator', array_values($user->roles))) {
+  //   $order_items['other'] = array_search('other', $category_keys);
+  // }
+  // else if (in_array('marketing_admin', array_values($user->roles))) {
+  //   $order_items['other'] = array_search('other', $category_keys);
+  // }
 
   // and now what remains in diff should be the section categories
 

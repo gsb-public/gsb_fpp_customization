@@ -660,26 +660,12 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   // rekey the $category_keys to be 0, 1, 2...
   $category_keys = array_values($category_keys);
 
-  // unset($diff_keys['customizable-content-lists']);
-  // if (in_array(array('administrator', 'marketing_admin', 'section manager'), array_values($user->roles))) {
-    // $order_items['customizable-content-lists'] = array_search('customizable-content-lists', $category_keys);
-  // }
-
   // reorder the display of the categories_array to follow this order:
   // 'blocks', 'content-panes', 'other' and <any sections>
 
   $order_items = array(
-    'customizable-content-lists' => array_search('customizable-content-lists', $category_keys),
-    'non-customizable-content-lists' => array_search('non-customizable-content-lists', $category_keys),
-    'menus' => array_search('menus', $category_keys),
-    'stock-content' => array_search('stock-content', $category_keys),
-    'custom-content---features' => array_search('custom-content---features', $category_keys),
-    'views' => array_search('views', $category_keys),
-    'administrator-blocks' => array_search('administrator-blocks', $category_keys),
-    'administrators' => array_search('administrators', $category_keys),
     'blocks' => array_search('blocks', $category_keys),
     'custom-blocks' => array_search('custom-blocks', $category_keys),
-    'marketing' => array_search('marketing', $category_keys),
    // 'content-panes' => array_search('content-panes', $category_keys),
   );
 
@@ -692,15 +678,35 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   unset($diff_keys['root']);
   unset($diff_keys['other']);
   unset($diff_keys['content-panes']);
+  unset($diff_keys['customizable-content-lists']);
+  unset($diff_keys['non-customizable-content-lists']);
+  unset($diff_keys['menus']);
+  unset($diff_keys['stock-content']);
+  unset($diff_keys['custom-content---features']);
+  unset($diff_keys['views']);
+  unset($diff_keys['administrator-blocks']);
+  unset($diff_keys['administrators']);
+  unset($diff_keys['marketing']);
 
   // only display the 'other' category if the user has the admin role
   // remove other and it is no longer in use
-  // if (in_array('administrator', array_values($user->roles))) {
-  //   $order_items['other'] = array_search('other', $category_keys);
-  // }
-  // else if (in_array('marketing_admin', array_values($user->roles))) {
-  //   $order_items['other'] = array_search('other', $category_keys);
-  // }
+  if (in_array('administrator', array_values($user->roles))
+    || in_array('marketing_admin', array_values($user->roles))
+    || in_array('section manager', array_values($user->roles))) {
+    $order_items = array(
+      'customizable-content-lists' => array_search('customizable-content-lists', $category_keys),
+      'non-customizable-content-lists' => array_search('non-customizable-content-lists', $category_keys),
+      'menus' => array_search('menus', $category_keys),
+      'stock-content' => array_search('stock-content', $category_keys),
+      'custom-content---features' => array_search('custom-content---features', $category_keys),
+      'views' => array_search('views', $category_keys),
+      'administrator-blocks' => array_search('administrator-blocks', $category_keys),
+      'administrators' => array_search('administrators', $category_keys),
+    ) + $order_items;
+    $order_items = array(
+      'marketing' => array_search('marketing', $category_keys),
+    ) + $order_items;
+  }
 
   // and now what remains in diff should be the section categories
 
@@ -713,6 +719,8 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   $neworder_categories_array = array();
   $neworder_categories = array();
   foreach($order_items as $key => $value) {
+   // dsm($value .'='. $key);
+   // watchdog('gsb_fpp_customization', $value .'='. $key);
     $neworder_categories_array[] = $vars['categories_array'][$value];
     $neworder_categories[$key] = $vars['categories'][$key];
   }

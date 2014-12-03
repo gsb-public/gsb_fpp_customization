@@ -694,6 +694,7 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
     unset($order_items['views']);
     unset($order_items['administrator-blocks']);
     unset($order_items['administrators']);
+    unset($vars['root_content']);
   }
 
   if (in_array('section manager', array_values($user->roles))) {

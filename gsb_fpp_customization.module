@@ -3,22 +3,43 @@
 include_once 'gsb_fpp_customization.features.inc';
 
 /**
- * Implemetation of hook_menu_alter()
+ * Implements hook_views_default_views_alter()
+ * This adds the 'FPP ID' column to the 'fieldable_pane_entities' listing view.
  */
-function gsb_fpp_customization_menu_alter(&$items) {
 
-  if (isset($items['admin/structure/fieldable-panels-panes/manage/%fieldable_panels_pane_type'])) {
-    $items['admin/structure/fieldable-panels-panes/manage/%fieldable_panels_pane_type']['page callback'] 
-      = 'gsb_fpp_customization_entities_list_page';
-  }
+function gsb_fpp_customization_views_default_views_alter(&$views) {
 
-}
+  // Get the display options section of the view
+  $display_options = &$views['fieldable_pane_entities']->display['default']->display_options;
 
-/**
- * List all entities for the given type.
- */
-function gsb_fpp_customization_entities_list_page($type) {
-  return views_embed_view('gsb_fieldable_pane_entities', 'default', $type);
+  // Create the 'fpid' field 
+  $fpid_field = array(
+    'id' => 'fpid',
+    'table' => 'fieldable_panels_panes',
+    'field' => 'fpid',
+    'label' => 'FPP ID',
+    'element_label_colon' => FALSE,
+    'separator' => '',
+  );
+
+  // Put the 'fpid' field after the title field
+
+  $index = array_search('title', array_keys($display_options['fields']));
+
+  $part1 = array_slice($display_options['fields'], $index, $index+1);
+  $part2 = array_slice($display_options['fields'], $index+1);
+
+  $display_options['fields'] = array_merge($part1, array('fpid' => $fpid_field), $part2);
+
+  // make the 'fpid' sortable and right aligned
+  $display_options['style_options']['info']['fpid'] = array(
+    'sortable' => 1,
+    'default_sort_order' => 'asc',
+    'align' => 'views-align-right',
+    'separator' => '',
+    'empty_column' => 0,
+  );
+
 }
 
 /**

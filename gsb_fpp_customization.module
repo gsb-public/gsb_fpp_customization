@@ -10,6 +10,9 @@ function gsb_fpp_customization_views_default_views_alter(&$views) {
 
   // Get the display options section of the view
   $display_options = &$views['fieldable_pane_entities']->display['default']->display_options;
+  if ($display_options == null) {
+    return;
+  }  
 
   // Create the 'fpid' field 
   $fpid_field = array(

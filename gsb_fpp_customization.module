@@ -768,6 +768,10 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
     $neworder_categories[$key] = $vars['categories'][$key];
   }
 
+  if (!in_array('marketing_admin', array_values($user->roles)) && !in_array('administrator', array_values($user->roles))) {
+    unset($neworder_categories['customizable-content-lists']['content']['Academic Calendar: Program']);
+  }
+
   $vars['categories_array'] = $neworder_categories_array;
   $vars['categories'] = $neworder_categories;
 

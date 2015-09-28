@@ -19,16 +19,17 @@
         }
       });
 
-      // Add a body class when the modal opens
-      $('body').addClass('panels-ipe-modal-open');
-
-      // Hide the body class when the modal disappears.
-      var timer = setInterval(function() {
-        if (!$('#modalContent').length) {
-          $('body').removeClass('panels-ipe-modal-open');
-          clearInterval(timer);
-        }
-      }, 1000);
+      if (!$('body').hasClass('panels-ipe-modal-open')) {
+        // Add a body class when the modal opens
+        $('body').addClass('panels-ipe-modal-open');
+        // Hide the body class when the modal disappears.
+        var timer = setInterval(function() {
+          if (!$('#modalContent').length) {
+            $('body').removeClass('panels-ipe-modal-open');
+            clearInterval(timer);
+          }
+        }, 5000);
+      }
     }
   }
 })(jQuery);

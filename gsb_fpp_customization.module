@@ -156,6 +156,7 @@ function gsb_fpp_customization_form_fieldable_panels_panes_fieldable_panels_pane
   // Alter the add_content_modal forms...
   _gsb_fpp_customization_add_content_form_alter($form, $form_state, $form_id);
 
+  $form['#validate'][] = 'gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_validate';
 }
 
 /**
@@ -927,4 +928,30 @@ function gsb_fpp_customization_panels_ipe_pane_links_alter(&$links, $context) {
     }
   }
 
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter()
+ */
+function gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_alter(&$form, &$form_state, $form_id) {
+  $form['#validate'][] = 'gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_validate';
+}
+
+/**
+ * Sets title to the admin_title if admin_title has a value.
+ * Sets admin_title to the title if title has a value.
+ */
+function gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_validate($form, &$form_state) {
+  if (!empty($form_state['values']['admin_title'])) {
+    if (empty($form_state['values']['title'])) {
+      $admin_title = $form_state['values']['admin_title'];
+      form_set_value($form['title'], $admin_title, $form_state);
+    }
+  }
+  if (!empty($form_state['values']['title'])) {
+    if (empty($form_state['values']['admin_title'])) {
+      $title = $form_state['values']['title'];
+      form_set_value($form['reusable']['admin_title'], $title, $form_state);
+    }
+  }
 }

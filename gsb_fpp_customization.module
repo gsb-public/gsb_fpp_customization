@@ -942,6 +942,9 @@ function gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_alte
  * Sets admin_title to the title if title has a value.
  */
 function gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_validate($form, &$form_state) {
+  if ($form['#bundle'] != 'image_cta') {
+    return;
+  }
   if (!empty($form_state['values']['admin_title'])) {
     if (empty($form_state['values']['title'])) {
       $admin_title = $form_state['values']['admin_title'];

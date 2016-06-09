@@ -2,6 +2,25 @@
   Drupal.behaviors.gsbfppcustomization = {
     attach: function(context, settings) {
 
+      // some serious monkey-business here...
+      // drupal's misc/vertical-tabs.js is hiding the reusable 'tab'
+      // on the fpp modal popup/dialog.
+      // so the following code will re-show the reusable 'tab'
+      if ($('.fieldable-pane-pane-form-reusable-information').length > 0) {
+        var oldHide = $.fn.hide;
+        $.fn.hide = function(args) {
+          var hideClass = this.attr('class');
+          if (hideClass != undefined && hideClass.indexOf('fieldable-pane-pane-form-reusable-information') != -1) {
+            var showInt = setInterval(function(){
+              $('.fieldable-pane-pane-form-reusable-information').show();
+              $.fn.hide = oldHide;
+              clearInterval(showInt);
+            }, 500);
+          }
+          oldHide.apply(this, args);
+        };
+      }
+
       // initialize superfish for the add fpp content menu
       $('#add-fpp-content-menu').superfish({
         animation: {height:'show'},   // slide-down effect without fade-in

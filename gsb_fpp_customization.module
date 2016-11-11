@@ -643,7 +643,6 @@ function _gsb_fpp_customization_remove_categories(&$vars) {
       $remove_items[] = $active['tree'][$value]['name'];
     }
   }
-
   // allow each module remove categories
   drupal_alter('gsb_fpp_customization_remove_category', $remove_items);
 
@@ -696,7 +695,6 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   global $user;
 
   $category_keys = array_keys($vars['categories']);
-
   // remove 'root' from the list of category keys
   foreach($category_keys as $key => $value) {
     if ($value == 'root') {
@@ -726,7 +724,6 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
 
   // find any categories that are left
   $diff_keys = array_diff_key($vars['categories'], $order_items);
-
   // remove categories and set show them for specific role
   unset($diff_keys['other']);
   unset($diff_keys['content-panes']);
@@ -745,13 +742,18 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
     unset($vars['root_content']);
   }
 
+  if ((!in_array('marketing_admin', array_values($user->roles)))
+    && (!in_array('administrator', array_values($user->roles)))) {
+      unset($order_items['blocks']);
+  }
+
   if (in_array('section manager', array_values($user->roles))) {
     unset($order_items['non-customizable-content-lists']);
     unset($order_items['views']);
   }
 
   if (in_array('Marketing:12396', array_values($user->roles))) {
-    unset($order_items['blocks']);
+    //unset($order_items['blocks']);
     unset($order_items['custom-blocks']);
     $order_items['views'] = array_search('views', $category_keys);
   }

@@ -327,8 +327,8 @@ function _gsb_fpp_customization_customize_reusable_form(&$form, &$form_state, $f
   }
 
   // hide the title field
-  // except when we are editing the accordion fpp
-  if (!empty($form['#bundle']) && $form['#bundle'] != 'accordion') {
+  // except when we are editing the accordion or image fpps
+  if (!empty($form['#bundle']) && $form['#bundle'] != 'accordion' && $form['#bundle'] != 'image') {
     $form['title']['#access'] = FALSE;
   }
 

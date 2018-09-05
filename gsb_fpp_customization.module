@@ -90,7 +90,15 @@ function gsb_fpp_customization_library() {
  */
 function gsb_fpp_customization_ctools_content_subtype_alter(&$subtype, &$plugin) {
 
-  $category_label  = (is_string($subtype['category'])) ? $subtype['category'] : $subtype['category'][0];
+  $category_label = "";
+  if (!empty($subtype['category'])) {
+    if (is_string($subtype['category'])) {
+      $category_label = $subtype['category'];
+    }
+    else if (!empty($subtype['category'][0])) {
+      $category_label = $subtype['category'][0];
+    }
+  }
 
   // Switch the labeling of "Miscellaneous" to "Blocks"
   if ($category_label == 'Miscellaneous') {
@@ -98,7 +106,7 @@ function gsb_fpp_customization_ctools_content_subtype_alter(&$subtype, &$plugin)
   }
 
   // Move all fielded panes to root.
-  if ($subtype['category'] == 'Fielded panes') {
+  if (!empty($subtype['category']) && $subtype['category'] == 'Fielded panes') {
     $subtype['category'] = 'root';
   }
 

@@ -462,9 +462,6 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
                                   'content_type' => $content
                                 ));
           // if this in a Customizable Content Pane, then add an 'Info' link
-          if (empty($content['category'])) {
-            $fred = 1;
-          }
           if (!empty($content['category']) && $content['category'][0] === 'Customizable Content Lists') {
             $category_link = str_replace('<li>', '', $category_link);
             $category_link = str_replace('</li>', '', $category_link);

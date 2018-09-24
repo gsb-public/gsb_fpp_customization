@@ -777,9 +777,6 @@ function _gsb_fpp_customization_reorder_categories(&$vars) {
   $neworder_categories_array = array();
   $neworder_categories = array();
   foreach($order_items as $key => $value) {
-    if ($value === false) {
-      continue;
-    }
     $neworder_categories_array[] = $vars['categories_array'][$value];
     $neworder_categories[$key] = $vars['categories'][$key];
   }

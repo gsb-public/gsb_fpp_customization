@@ -427,6 +427,8 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
     $vars['first_page'] = TRUE;
     unset($vars['header']);
 
+    voices_lists_permission_check($vars, $user);
+
     foreach($vars['categories'] as $category => $value) {
       if ($category == 'root') {
         continue;
@@ -435,6 +437,7 @@ function gsb_fpp_customization_process_panels_add_content_modal(&$vars) {
       if (isset($value['title'])) {
         $category_title = $value['title'];
       }
+
       if ($category == 'other') {
         // only display the 'other' category if the user has the admin or marketing_admin role
         $other_access = FALSE;
@@ -976,3 +979,41 @@ function gsb_fpp_customization_form_fieldable_panels_panes_entity_edit_form_vali
     }
   }
 }
+
+function voices_lists_permission_check(&$vars, $user) {
+  // Only for marketing admin, and administrator
+  foreach($vars['categories']['customizable-content-lists']['content'] as $fpp => $item) {
+    if($fpp == 'Voices: All Voices Builder' ||
+      $fpp == 'Voices: Multiple Criteria + Filters') {
+      if (
+        (!in_array('administrator', array_values($user->roles))) &&
+        (!in_array('marketing_admin', array_values($user->roles)))
+      ) {
+        unset($vars['categories']['customizable-content-lists']['content'][$fpp]);
+        }
+    }
+  }
+  foreach($vars['categories']['homepage-elements']['content'] as $fpp => $item) {
+    if($fpp == 'Voices: Homepage Three Across') {
+      if (
+        (!in_array('administrator', array_values($user->roles))) &&
+        (!in_array('marketing_admin', array_values($user->roles)))
+      ) {
+        unset($vars['categories']['homepage-elements']['content'][$fpp]);
+      }
+    }
+  }
+  // For section manager, marketing admin, and administrator
+  foreach($vars['categories']['customizable-content-lists']['content'] as $fpp => $item) {
+    if($fpp == 'Voice' ||
+      $fpp == 'Voices: Multiple Criteria with CTA') {
+      if (
+        (!in_array('administrator', array_values($user->roles))) &&
+        (!in_array('marketing_admin', array_values($user->roles))) &&
+        (!in_array('section manager', array_values($user->roles)))
+      ) {
+        unset($vars['categories']['customizable-content-lists']['content'][$fpp]);
+      }
+    }
+  }
+};
